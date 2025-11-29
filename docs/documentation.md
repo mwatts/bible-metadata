@@ -5,7 +5,7 @@
 
 Visit the pages below to find instructions for connecting or downloading and get oriented to the data that's available.
 
-[Tables and Fields (with dev status)](documentation/tables-and-fields-with-dev-status.md)
+[JSON Fields documentation](documentation/json-fields-documentation.md)
 
 [View and Export Data with Airtable](documentation/view-and-export-data-with-airtable.md)
 
