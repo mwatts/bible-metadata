@@ -8,4 +8,4 @@ CALL apoc.periodic.iterate("
   SET v.verseId = value.fields.verseID
   SET v.verseText = value.fields.verseText
   SET v.mdText = value.fields.mdText
-", {batchSize: 5000, iterateList: true, parallel:true});
+", {batchSize: 5000, iterateList: true, parallel: false});

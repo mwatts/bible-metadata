@@ -6,4 +6,4 @@ CALL apoc.periodic.iterate("
   SET y.year = value.fields.yearNum
   SET y.formattedYear = value.fields.formattedYear
   SET y.isoYear = value.fields.isoYear
-", {batchSize: 1000, iterateList: true, parallel:true});
+", {batchSize: 1000, iterateList: true, parallel: false});

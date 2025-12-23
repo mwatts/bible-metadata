@@ -6,4 +6,4 @@ CALL apoc.periodic.iterate("
   SET d.id = value.fields.termID
   SET d.term = value.fields.termLabel
   SET d.dictText = value.fields.dictText
-", {batchSize: 1000, iterateList: true, parallel:true});
+", {batchSize: 1000, iterateList: true, parallel: false});

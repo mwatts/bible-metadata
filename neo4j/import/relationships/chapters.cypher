@@ -14,4 +14,4 @@ CALL apoc.periodic.iterate("
     MERGE (w:Person{ id: writer })
     MERGE (w)-[:WROTE]->(c)
     )
-", {batchSize: 1000, iterateList: true, parallel: true});
+", {batchSize: 1000, iterateList: true, parallel: false});

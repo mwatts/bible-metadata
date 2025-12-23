@@ -17,4 +17,4 @@ CALL apoc.periodic.iterate("
   SET p.slug = value.fields.slug
   SET p.status = value.fields.status
   SET p.comments = value.fields.comments
-", {batchSize: 1000, iterateList: true, parallel:true});
+", {batchSize: 1000, iterateList: true, parallel: false});

@@ -53,4 +53,4 @@ CALL apoc.periodic.iterate("
     MERGE (c)-[:CHILD_OF]->(p)
     )
 
-", {batchSize: 1000, iterateList: true, parallel: true});
+", {batchSize: 1000, iterateList: true, parallel: false});

@@ -4,4 +4,4 @@ CALL apoc.periodic.iterate("
 ", "
   MERGE (p:PeopleGroup{ id:value.id })
   SET p.name = value.fields.groupName
-", {batchSize: 1000, iterateList: true, parallel:true});
+", {batchSize: 1000, iterateList: true, parallel: false});

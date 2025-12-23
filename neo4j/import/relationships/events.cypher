@@ -30,4 +30,4 @@ CALL apoc.periodic.iterate("
     MERGE (e)-[:OCCURRED_IN]->(y)
     )
 
-", {batchSize: 1000, iterateList: true, parallel: true});
+", {batchSize: 1000, iterateList: true, parallel: false});

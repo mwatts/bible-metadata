@@ -11,4 +11,4 @@ CALL apoc.periodic.iterate("
   SET e.precision = value.fields.precision
   SET e.sortKey = value.fields.sortKey
 
-", {batchSize: 1000, iterateList: true, parallel:true});
+", {batchSize: 1000, iterateList: true, parallel: false});
