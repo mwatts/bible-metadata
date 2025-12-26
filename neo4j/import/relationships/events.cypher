@@ -5,7 +5,7 @@ CALL apoc.periodic.iterate("
     MATCH (e:Event{ id: value.id })
     WITH e, value
 
-    FOREACH( verse in value.fields.versesDescribed |
+    FOREACH( verse in value.fields.verses |
     MERGE (v:Verse{ id: verse })
     MERGE (v)-[:DESCRIBES]->(e)
     )
@@ -15,19 +15,15 @@ CALL apoc.periodic.iterate("
     MERGE (p)-[:PARTICIPATED_IN]->(e)
     )
 
-    FOREACH( place in value.fields.placeOccurred |
+    FOREACH( place in value.fields.`places (from verses)` |
     MERGE (l:Place{ id: place })
     MERGE (e)-[:OCCURRED_IN]->(l)
     )
 
-    FOREACH( pre in value.fields.preceedingEvent |
+    FOREACH( pre in value.fields.predecessor |
     MERGE (pr:Event{ id: pre })
     MERGE (pr)-[:PRECEEDS]->(e)
     )
-
-    FOREACH( year in value.fields.years |
-    MERGE (y:Year{ id: year })
-    MERGE (e)-[:OCCURRED_IN]->(y)
     )
 
 ", {batchSize: 1000, iterateList: true, parallel: false});

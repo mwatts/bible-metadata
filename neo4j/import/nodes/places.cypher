@@ -16,5 +16,5 @@ CALL apoc.periodic.iterate("
       END
   SET p.slug = value.fields.slug
   SET p.status = value.fields.status
-  SET p.comments = value.fields.comments
+  SET p.comment = value.fields.comment
 ", {batchSize: 1000, iterateList: true, parallel: false});

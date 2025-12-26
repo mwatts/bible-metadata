@@ -4,11 +4,9 @@ CALL apoc.periodic.iterate("
 ", "
   MERGE (e:Event{ id:value.id })
   SET e.eventID = value.fields.eventID
-  SET e.title = value.fields.eventName
+  SET e.title = value.fields.title
   SET e.startDate = value.fields.startDate
   SET e.duration = value.fields.duration
-  SET e.sequence = value.fields.sequence
-  SET e.precision = value.fields.precision
   SET e.sortKey = value.fields.sortKey
 
 ", {batchSize: 1000, iterateList: true, parallel: false});
