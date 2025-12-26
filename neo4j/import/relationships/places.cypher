@@ -20,7 +20,7 @@ CALL apoc.periodic.iterate("
     MERGE (pb)-[:BORN_IN]->(p)
     )
 
-    FOREACH ( died in value.fields.peopleBorn |
+    FOREACH ( died in value.fields.peopleDied |
     MERGE (pd:Person{ id: died })
     MERGE (pd)-[:DIED_IN]->(p)
     )
