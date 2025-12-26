@@ -24,6 +24,4 @@ CALL apoc.periodic.iterate("
     MERGE (pr:Event{ id: pre })
     MERGE (pr)-[:PRECEEDS]->(e)
     )
-    )
-
 ", {batchSize: 1000, iterateList: true, parallel: false});
