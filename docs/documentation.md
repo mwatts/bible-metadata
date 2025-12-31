@@ -7,6 +7,8 @@ Visit the pages below to find instructions for connecting or downloading and get
 
 [JSON Fields documentation](documentation/json-fields-documentation.md)
 
+[Neo4j Graph Documentation](documentation/neo4j-graph-documentation.md)
+
 [View and Export Data with Airtable](documentation/view-and-export-data-with-airtable.md)
 
 [Querying with Cypher and Neo4j](documentation/querying-with-cypher-and-neo4j.md)
