@@ -195,7 +195,7 @@ This table chronicles the timeline of Biblical events. Each record details a spe
 | `modified` | string | Unknown | Last modified date and time |
 | `sortKey` | float | Incomplete | Uses a combination of year and verseSort to sort all events chronolgically. The calculation formula, originated in airtable, is `INT(IF(LEFT(startDate,1)='-',LEFT(startDate,5),LEFT(startDate,4))) + INT(verseSort)/100000000`|
 | `places (from verses)` | array | Unknown | Locations that are mentioned in the verses associated with the event. |
-| `rangeFlag` | boolean | Unknown | |
+| `rangeFlag` | boolean | Unknown | If rangeFlag is true, it means that the year is an approximation and not an exact date. |
 | `people (from verses)` | array | Unknown | People who are mentioned in the verses associated with the event. |
 | `lagType` | string | Unknown | The type of predecessor relationship - either Start-to-Start (SS) or Finish-to-Start (FS). For example, for an event with lag of 130Y, lagType `FS` means that the event started 130 years after the predecessor event finished, whereas lagType `SS` means that the event started 130 years after the predecessor event started.|
 | `eventID` | integer | Unknown | Unique identifier |
