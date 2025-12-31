@@ -262,6 +262,7 @@ If you ran the `index.cypher` file during setup, you have access to powerful ful
 The results will be ranked by how well they match the query.
 
 **Example 1: Boolean Search**
+
 Find people associated with both the terms "Prophet" and "Judge".
 ```cypher
 CALL db.index.fulltext.queryNodes("person_fulltext", "Prophet AND Judge") 
@@ -277,6 +278,7 @@ RETURN node.name, node.title, score LIMIT 5;
 | Samuel | Samuel | 1.74 |
 
 **Example 2: Proximity Search**
+
 Find verses where "love" and "hate" appear within 5 words of each other.
 ```cypher
 CALL db.index.fulltext.queryNodes("verse_fulltext", "\"love hate\"~5") 
@@ -292,6 +294,7 @@ RETURN node.osisRef, node.verseText, score LIMIT 3;
 | Matt.5.43 | ...Thou shalt love thy neighbour, and hate thine enemy. | 2.30 |
 
 **Example 3: Fielded Search**
+
 Search only within the `title` property for "King".
 ```cypher
 CALL db.index.fulltext.queryNodes("person_fulltext", "title:King") 
@@ -307,6 +310,7 @@ RETURN node.name, node.title, score LIMIT 3;
 | Jabin | Jabin (king of Hazor) | 1.50 |
 
 **Example 4: Range Search**
+
 Find years between 1000 BC and 1010 BC.
 ```cypher
 CALL db.index.fulltext.queryNodes("year_fulltext", "[1000 TO 1010]") 
@@ -322,6 +326,7 @@ RETURN node.formattedYear, score;
 | 1004 BC | 1.0 |
 
 **Example 5: Weighted Search (Boosting)**
+
 Find multiple figures called Joseph, but order them based on if their title contains "son of" or not.
 ```cypher
 CALL db.index.fulltext.queryNodes(
