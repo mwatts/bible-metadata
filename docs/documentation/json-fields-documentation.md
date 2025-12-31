@@ -1,10 +1,23 @@
 # Theographic Bible Metadata - JSON Fields Documentation
 This documentation provides a comprehensive reference for the structure and fields of JSON files within the Theographic Bible Metadata dataset.
 
-### Dataset Overview
+## Table of Contents
+- [Dataset Overview](#dataset-overview)
+- [Standard JSON Entity Structure](#standard-json-entity-structure)
+- [Books](#books)
+- [Chapters](#chapters)
+- [Easton](#easton)
+- [Events](#events)
+- [People](#people-38-fields)
+- [PeopleGroups](#peoplegroups-7-fields)
+- [Periods](#periods-9-fields)
+- [Places](#places-40-fields)
+- [Verses](#verses-17-fields)
+
+## Dataset Overview
 The JSON files are located in the `json/` directory of the root repository. These files were generated through a Python ETL script from Airtable, where the original data was inputted and continues to be updated. Because of this Airtable origin, you may encounter peculiarities in data structure and field name inconsistencies. Throughout this documentation, JSON files are referred to as "tables" since they directly represent tabular data exported from Airtable.
 
-### Standard JSON Entity Structure
+## Standard JSON Entity Structure
 All Theographic JSON entities have three root fields:
 - `id` - A 14-character alphanumeric case-sensitive unique record identifier (e.g., `recRAcqtgn28zXm1a`)
 - `createdTime` - An ISO 8601/RFC 3339 formatted timestamp (e.g., `2018-06-01T13:12:45.000Z`)
