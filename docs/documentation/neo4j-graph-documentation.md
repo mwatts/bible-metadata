@@ -1,6 +1,6 @@
 # Theographic Bible Metadata - Neo4j Graph Documentation
 
-This documentation provides a comprehensive reference for the structure, nodes, and relationships of the Neo4j graph database implementation of Theographic.
+This documentation provides a reference for the structure, nodes, and relationships of the Neo4j graph database implementation of Theographic.
 
 ## Table of Contents
 - [Environment & Setup](#environment--setup)
@@ -18,9 +18,9 @@ For beginners looking to set up their Neo4j environment, please refer to the off
 
 ## Import Instructions
 
-To successfully build the graph, scripts must be executed in the following specific order. While the order of files *within* a folder (e.g., which node type is imported first) does not matter, the folder order is critical.
+To successfully build the graph, **scripts must be executed in the following specific order.** While the order of files *within* a folder (e.g., which node type is imported first) does not matter, **the folder order is critical.**
 
-1.  **Schema & Indexes**: Run `neo4j/import/index.cypher` first. This sets up constraints and indexes which significantly speed up the subsequent data import. **Crucially, this also creates Full-Text Indexes**, which enable advanced search capabilities (fuzzy matching, relevance scoring) across text fields like names, descriptions, and verse text.
+1.  **Schema & Indexes**: Run `neo4j/import/index.cypher` first. This sets up constraints and indexes which significantly speed up the subsequent data import. **Crucially, this also creates Full-Text Indexes**, which enable advanced search capabilities across text fields like names, descriptions, and verse text.
 2.  **Nodes**: Run all scripts in `neo4j/import/nodes/`. These create the entities (People, Places, Books, etc.) without connecting them yet.
 3.  **Relationships**: Run all scripts in `neo4j/import/relationships/`. These scripts match existing nodes and create the edges (relationships) between them.
 
@@ -130,7 +130,7 @@ Represents a single verse of scripture.
 | :--- | :--- |
 | `id` | Unique 14-char identifier |
 | `osisRef` | Standard reference (e.g., "Gen.1.1") |
-| `verseText` | The text of the verse (KJV/ESV) |
+| `verseText` | The text of the verse |
 | `verseNum` | Verse number |
 
 **Relationships:**
@@ -270,7 +270,8 @@ RETURN node.name, node.title, score LIMIT 5;
 ```
 
 **Returns:**
-| node.name | node.title | score |
+<!-- The weird <span></span> wrapper around the "." is to stop github from automatically making it into a hyperlink. -->
+| node<span>.</span>name | node.title | score |
 | :--- | :--- | :--- |
 | Jesus | Jesus Christ | 2.17 |
 | Samuel | Samuel | 1.74 |
@@ -332,7 +333,9 @@ RETURN node.name, node.title, score ORDER BY score DESC LIMIT 4;
 ```
 
 **Returns:**
-| node.name | node.title | score |
+<!-- The weird <span></span> wrapper around the "." is to stop github from automatically making it into a hyperlink. -->
+
+| node<span>.</span>name | node.title | score |
 | :--- | :--- | :--- |
 | Joseph | Joseph (son of Jacob) | 11.35 |
 | Joseph | Joseph (son of Asaph) | 11.35 |
