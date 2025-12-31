@@ -236,7 +236,7 @@ RETURN paul.name, p.name, p.latitude, p.longitude;
 ```
 
 ### 3. Events/Timeline Analysis
-**Timeline of Moses:**
+**Find which events Moses was part of:**
 ```cypher
 MATCH (p:Person {name: "Moses"})-[:PARTICIPATED_IN]->(e:Event)
 RETURN e.title, e.startDate
