@@ -244,7 +244,7 @@ ORDER BY e.sortKey ASC
 LIMIT 10
 ```
 
-**Who participated in the "The Great Flood begins"?**
+**Find who participated in the event called "The Great Flood begins":**
 ```cypher
 MATCH (e:Event {title: "The Great Flood begins"})<-[:PARTICIPATED_IN]-(p:Person)
 RETURN p.name
