@@ -10,16 +10,6 @@ CALL apoc.periodic.iterate("
     MERGE (v)-[:MENTIONS]->(p)
     )
 
-    FOREACH (birth in value.fields.birthYear |
-    MERGE (by:Year{ id: birth })
-    MERGE (p)-[:BORN_IN]->(by)
-    )
-
-    FOREACH (death in value.fields.deathYear |
-    MERGE (dy:Year{ id: death })
-    MERGE (p)-[:DIED_IN]->(dy)
-    )
-
     FOREACH (birthplace in value.fields.birthPlace |
     MERGE (bp:Place{ id: birthplace })
     MERGE (p)-[:BORN_IN]->(bp)

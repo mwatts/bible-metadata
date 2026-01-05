@@ -11,4 +11,6 @@ CALL apoc.periodic.iterate("
   SET p.gender = value.fields.gender
   SET p.description = value.fields.dictionaryText
   SET p.status = value.fields.status
+  SET p.birthYear = value.fields.birthYear
+  SET p.deathYear = value.fields.deathYear
 ", {batchSize: 1000, iterateList: true, parallel: false});

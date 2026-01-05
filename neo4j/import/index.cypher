@@ -5,7 +5,6 @@ CREATE INDEX verse_id IF NOT EXISTS FOR (v:Verse) ON (v.id);
 CREATE INDEX person_id IF NOT EXISTS FOR (p:Person) ON (p.id);
 CREATE INDEX place_id IF NOT EXISTS FOR (p:Place) ON (p.id);
 CREATE INDEX event_id IF NOT EXISTS FOR (e:Event) ON (e.id);
-CREATE INDEX year_id IF NOT EXISTS FOR (y:Year) ON (y.id);
 CREATE INDEX peopleGroup_id IF NOT EXISTS FOR (g:PeopleGroup) ON (g.id);
 CREATE INDEX dictionary_id IF NOT EXISTS FOR (d:Dictionary) ON (d.id);
 
@@ -33,6 +32,3 @@ FOR (n:Verse) ON EACH [n.verseText, n.osisRef];
 
 CREATE FULLTEXT INDEX chapter_fulltext IF NOT EXISTS 
 FOR (n:Chapter) ON EACH [n.osisRef];
-
-CREATE FULLTEXT INDEX year_fulltext IF NOT EXISTS 
-FOR (n:Year) ON EACH [n.formattedYear];
