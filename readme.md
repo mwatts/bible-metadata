@@ -10,14 +10,14 @@ Theographic is a [knowledge graph](https://www.youtube.com/watch?v=mmQl6VGvX-c) 
 - **Machine Learning & AI Researchers**: Knowledge graphs provide critical context to train algorithms and interpret results.
 
 ## Usage
-Complete data documentation, including API information, can be found [here](docs/documentation.md). 
+Complete data documentation, including API information, can be found [here](docs/README.md). 
 
-For specific details on using the Neo4j graph database, see the [Neo4j Graph Documentation](docs/documentation/neo4j-graph-documentation.md).
+For specific details on using the Neo4j graph database, see the [Neo4j Graph Documentation](docs/neo4j-graph-documentation.md).
 
 If your database is capable of importing nested JSON objects, the files in the json folder of this repo are the preferred source. The CSV files do not follow typical database table design, but can be imported and used in traditional SQL databases. Depending on your situation, you may prefer to transform array-based fields to relational "lookup" tables to simplify join logic.
 
 ## Learn More
-[✍Contributing](https://theographic.notion.site/Contributing-ab417439cabb4b22a241e19184660eb7?pvs=25)
+[✍Contributing](docs/contributing.md)
 
 [📰Articles](https://theographic.notion.site/Articles-41ac2e70f3d742a0921f9dec95fdfe99?pvs=25)
 
