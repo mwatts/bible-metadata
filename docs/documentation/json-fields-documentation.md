@@ -38,12 +38,12 @@ This table contains high-level metadata for each of the 66 books in the Protesta
 | `bookDiv` | string | Validated | High-level divisions of the Bible |
 | `shortName` | string | Validated | Shortest abbreviation, useful for small labels |
 | `bookOrder` | integer | Validated | Order of books in the traditional Protestant canon, excluding Apocrypha. |
-| `verses` | array | Validated | Links to records in the "verses" table. |
-| `yearWritten` | array | Incomplete | Approximate year written, if known. |
-| `placeWritten` | array | Incomplete | Place the book was written, if known. |
+| `verses` | array | Validated | An array of record IDs linking to all verses contained within this book. |
+| `yearWritten` | array | Incomplete | An array of record IDs linking to the 'periods' table, representing the approximate year(s) the book was written. |
+| `placeWritten` | array | Incomplete | An array of record IDs linking to the 'places' table, representing the location where the book was written. |
 | `verseCount` | integer | Validated | Total verses |
-| `chapters` | array | Validated | Links to records in the "chapters" table. |
-| `writers` | array | Validated | Roll-up from Chapter-level writer assignment |
+| `chapters` | array | Validated | An array of record IDs linking to all chapters contained within this book. |
+| `writers` | array | Validated | An array of record IDs linking to the 'people' table, representing the traditional writers of the book. |
 | `testament` | string | Validated | Old or New Testament identifier |
 | `slug` | string | Validated | Lowercase, url-friendly version of Osis Name |
 | `peopleCount` | integer | Validated | Number of people mentioned by name within the book |
@@ -99,10 +99,10 @@ This table defines every chapter in the Bible. Each record links to its parent `
 | Field | Type | Status | Description |
 |-------|------|--------|-------------|
 | `osisRef` | string | Validated | Unique identifier using book.chapter |
-| `book` | array | Validated | Links to records in the "book" table. |
+| `book` | array | Validated | An array containing the record ID of the book this chapter belongs to. |
 | `chapterNum` | integer | Validated | |
-| `writer` | array | Validated | Links to a person record, based on traditional understandings of authorship. |
-| `verses` | array | Validated | Links to verse records of all verses within the chapter. |
+| `writer` | array | Validated | An array of record IDs linking to the 'people' table, representing the traditional writer(s) of this chapter. |
+| `verses` | array | Validated | An array of record IDs linking to all verses contained within this chapter. |
 | `slug` | string | Validated | Lowercase, url-friendly version of Osis Ref |
 | `peopleCount` | integer | Validated | Number of people mentioned by name within the chapter |
 | `placesCount` | integer | Validated | Number of places mentioned by name within the chapter |
@@ -147,16 +147,16 @@ This table contains parsed entries from the 1897 Easton's Bible Dictionary. Each
 | Field | Type | Status | Description |
 |-------|------|--------|-------------|
 | `dictLookup` | string | Validated | Unique string for a dictionary entry, split out by sub-paragraphs |
-| `termID` | string | Unknown | The id attribute of the <term> tag in the source XML. This ID indicates the location of the term within the original document's structure. For example, "a-p1.11" signifies that the term is in the "a" section, and within that section, it is associated with the paragraph block indexed as "p1" and is the 11th tagged element within that block. |
-| `termLabel` | string | Validated | Title of the original entry |
+| `termID` | string | Unknown | This field preserves the term’s original position in the source XML, making theographic’s extraction process transparent and allowing easy entry to trace back to its source context. It records the `id` attribute of the `<term>` tag in the source XML, and it indicates the location of the term within the original document's structure. For example, `a-p1.11` signifies that the term is in the "a" section, and that, within that section, it is associated with the paragraph block indexed as "p1", and that within that block, it is the 11th tagged element. |
+| `termLabel` | string | Validated | The title of the dictionary term being defined. |
 | `def_id` | string | Unknown | The id attribute of the <def> tag in the source XML. This ID directly corresponds to the termID and points to the definition block for that specific term. For example, if the termID is "a-p1.11", the corresponding def_id will be "a-p1.12". |
 | `has_list` | string | Unknown | A boolean field ("True" or "False") that indicates whether the definition text contains a numbered or itemized list. This is derived from the structure of the source XML, though not explicitly shown in the provided snippet. |
-| `itemNum` | integer | Validated | Sub-section number, if multiple sections are listed in one entry |
+| `itemNum` | integer | Validated | Indicates the item number for definitions that are part of a list (e.g., 1, 2, 3). This occurs when multiple definitions exist for the same word and they are itemized. Defaults to 0 for entries that are not itemized. |
 | `matchType` | string | Temporary | Used to validate scripts which automatically match entities. |
 | `matchSlugs` | string | Temporary | Used to check automatically matched slugs of entities in other tables |
-| `dictText` | string | Validated | Text of the dictionary entry |
-| `personLookup` | array | Populated | Links to the "people" table |
-| `placeLookup` | array | Populated | Links to the "places" table |
+| `dictText` | string | Validated | The full definition text for the term. This field may contain Markdown-style links and newline characters for paragraph breaks. |
+| `personLookup` | array | Populated | An array of record IDs that link to corresponding entries in the 'people' JSON. Each ID represents a person mentioned in the dictText. |
+| `placeLookup` | array | Populated | An array of record IDs that link to corresponding entries in the 'places' JSON. Each ID represents a place mentioned in the dictText. |
 | `index` | integer | Validated | Unique identifier |
 
 ### Relationships
@@ -196,20 +196,20 @@ This table chronicles the timeline of Biblical events. Each record details a spe
 | `title` | string | Incomplete | Unique title for an event |
 | `startDate` | string | Incomplete | ISO formatted date to identify calendar dates where known |
 | `duration` | string | Incomplete | Event length in days, years, etc. for use in end date calculations |
-| `participants` | array | Incomplete | Links people involved in the event |
-| `locations` | array | Incomplete | Links to place records where the event took place |
-| `verses` | array | Incomplete | Verses which serve as an original narrative for the event |
-| `predecessor` | array | Incomplete | Establishes predecessor-successor constraints if applicable |
+| `participants` | array | Incomplete | An array of record IDs linking to the 'people' table, representing the participants in the event. |
+| `locations` | array | Incomplete | An array of record IDs linking to the 'places' table, representing the location(s) where the event occurred. |
+| `verses` | array | Incomplete | An array of record IDs linking to the 'verses' table, representing the scriptural basis for the event. |
+| `predecessor` | array | Incomplete | An array containing the record ID of the immediately preceding event in the timeline. |
 | `lag` | string | Unknown | The time elapsed between the predecessor event and the current event. |
-| `partOf` | array | Unknown | Links an event to a larger event that it is a part of. |
+| `partOf` | array | Unknown | An array containing the record ID of a parent event, indicating this event is a sub-component of a larger narrative arc. |
 | `notes` | string | Unknown | A field for additional commentary or explanatory notes about the event. |
 | `verseSort` | string | Unknown | The `verseID` of the first verse in the `verses` field of this event. |
-| `groups` | array | Unknown | Groups of people involved in the event. |
+| `groups` | array | Unknown | An array of record IDs linking to the 'peopleGroups' table, representing groups involved in the event. |
 | `modified` | string | Unknown | Last modified date and time |
 | `sortKey` | float | Incomplete | Uses a combination of year and verseSort to sort all events chronolgically. The calculation formula, originated in airtable, is `INT(IF(LEFT(startDate,1)='-',LEFT(startDate,5),LEFT(startDate,4))) + INT(verseSort)/100000000`|
-| `places (from verses)` | array | Unknown | Locations that are mentioned in the verses associated with the event. |
+| `places (from verses)` | array | Unknown | An array of record IDs linking to the 'places' table, derived automatically from the associated verses. |
 | `rangeFlag` | boolean | Unknown | If rangeFlag is true, it means that the year is an approximation and not an exact date. |
-| `people (from verses)` | array | Unknown | People who are mentioned in the verses associated with the event. |
+| `people (from verses)` | array | Unknown | An array of record IDs linking to the 'people' table, derived automatically from the associated verses. |
 | `lagType` | string | Unknown | The type of predecessor relationship - either Start-to-Start (SS) or Finish-to-Start (FS). For example, for an event with lag of 130Y, lagType `FS` means that the event started 130 years after the predecessor event finished, whereas lagType `SS` means that the event started 130 years after the predecessor event started.|
 | `eventID` | integer | Unknown | Unique identifier |
 
@@ -264,38 +264,38 @@ This table provides a comprehensive catalog of every individual mentioned by nam
 | `surname` | string | Validated | Surname, if known. |
 | `isProperName` | boolean | Validated | Identifies those with proper names vs. descriptive names like "Wife of..." or "Son of..." |
 | `gender` | string | Validated | Male or Female |
-| `birthYear` | array | Populated | Not yet aligned with passage/event timelines |
-| `deathYear` | array | Populated | Not yet aligned with passage/event timelines |
-| `memberOf` | array | Validated | Links to peopleGroups if membership can be deduced. |
-| `birthPlace` | array | Validated | Links to place records where the birth location is known |
-| `deathPlace` | array | Validated | Links to place records where the death location is known |
+| `birthYear` | array | Populated | An array of record IDs linking to the 'events' table (specifically year records), representing the person's birth year. |
+| `deathYear` | array | Populated | An array of record IDs linking to the 'events' table (specifically year records), representing the person's death year. |
+| `memberOf` | array | Validated | An array of record IDs linking to the 'peopleGroups' table, indicating the groups (tribes, families, etc.) the person belongs to. |
+| `birthPlace` | array | Validated | An array of record IDs linking to the 'places' table, representing the person's birthplace. |
+| `deathPlace` | array | Validated | An array of record IDs linking to the 'places' table, representing the person's place of death. |
 | `dictionaryLink` | string | Unknown | A URL to its Easton's Bible Dictionary entry at https://www.biblestudytools.com/dictionaries/eastons-bible-dictionary. |
 | `dictionaryText` | string | Unknown | The text content from its Easton's Bible Dictionary entry. |
 | `events` | string | Incomplete | Title of events in which the person participated. Complete for the book of Acts |
 | `verseCount` | integer | Validated | Counts verses where the person is mentioned by name |
-| `verses` | array | Validated | Verses where the person is mentioned by name |
-| `siblings` | array | Validated | Links to the person's full siblings. |
-| `halfSiblingsSameMother` | array | Validated | Links to the person's maternal half-siblings. |
-| `halfSiblingsSameFather` | array | Validated | Links to the person's paternal half-siblings. |
-| `chaptersWritten` | array | Validated | Specific chapters written by this person according to traditional understanding of authorship. |
-| `mother` | array | Validated | Links to the person's mother. |
-| `father` | array | Validated | Links to the person's father. |
-| `children` | array | Validated | Links to the person's children. |
+| `verses` | array | Validated | An array of record IDs linking to the 'verses' table, representing every verse where this person is explicitly mentioned. |
+| `siblings` | array | Validated | An array of record IDs linking to the 'people' table, representing the person's full siblings. |
+| `halfSiblingsSameMother` | array | Validated | An array of record IDs linking to the 'people' table, representing the person's maternal half-siblings. |
+| `halfSiblingsSameFather` | array | Validated | An array of record IDs linking to the 'people' table, representing the person's paternal half-siblings. |
+| `chaptersWritten` | array | Validated | An array of record IDs linking to the 'chapters' table, representing chapters attributed to this person. |
+| `mother` | array | Validated | An array containing the record ID of the person's mother in the 'people' table. |
+| `father` | array | Validated | An array containing the record ID of the person's father in the 'people' table. |
+| `children` | array | Validated | An array of record IDs linking to the 'people' table, representing the person's children. |
 | `minYear` | integer | Temporary | Temporary to help align birth year to passage/events timeline |
 | `maxYear` | integer | Temporary | Temporary to help align birth year to passage/events timeline |
 | `displayTitle` | string | Populated | Disambiguated name suitable for page titles and search results |
 | `status` | string | Temporary | The validation status of the individual person record |
 | `alphaGroup` | string | Validated | Used for alphabetical indexing |
 | `slug` | string | Validated | Lowercase, url-friendly version of personLookup |
-| `partners` | array | Unknown | Links to the person's spouse or partner. |
+| `partners` | array | Unknown | An array of record IDs linking to the 'people' table, representing the person's spouse(s) or partner(s). |
 | `alsoCalled` | string | Populated | Alternate spellings or other known names for the same person. |
 | `ambiguous` | boolean | Temporary | Identifies display titles which have not been edited for disambiguation. |
 | `Disambiguation (temp)` | string | Temporary | Mechanical Turk entries used to aid in disambiguation |
-| `eastons` | array | Incomplete | Links to relevant sub-sections in Easton's dictionary. Complete for the book of Acts |
+| `eastons` | array | Incomplete | An array of record IDs linking to the 'easton' table, representing relevant dictionary entries. |
 | `Easton's Count` | integer | Unknown | 1 if it exists as an entry in Easton's Bible Dictionary; 0 otherwise.|
 | `dictText` | array | Incomplete | Markdown-formatted text from relevant sub-section in Easton's dictionary. |
 | `modified` | string | Unknown | Last modified date and time |
-| `timeline` | array | Unknown | Links to events for the person. |
+| `timeline` | array | Unknown | An array of record IDs linking to the 'events' table, representing events associated with this person. |
 
 ### Relationships
 - `birthYear` → References field `id` of `events` table
@@ -389,12 +389,12 @@ This table defines collective groups of people, such as tribes, nations, or fami
 | Field | Type | Status | Description |
 |-------|------|--------|-------------|
 | `groupName` | string | Validated | Unique name |
-| `members` | array | Validated | Links to a person record for members of this group |
-| `verses` | array | Incomplete | Verses mentioning this group |
+| `members` | array | Validated | An array of record IDs linking to the 'people' table, representing the individual members of this group. |
+| `verses` | array | Incomplete | An array of record IDs linking to the 'verses' table, representing verses where this group is mentioned. |
 | `modified` | string | Unknown | Last modified date and time |
 | `events` | string | Incomplete | Events in which this group participated. |
-| `events_dev` | array | Unknown | Links the group to IDs of relevant events. |
-| `partOf` | array | Unknown | Links a group to a larger group it is a part of (e.g., each of the twelve tribes of Israel is part of the "Nation of Israel" group). |
+| `events_dev` | array | Unknown | An array of record IDs linking to the 'events' table, representing events involving this group. |
+| `partOf` | array | Unknown | An array containing the record ID of a parent group in the 'peopleGroups' table. |
 
 ### Relationships
 - `members` → References field `id` of `people` table records
@@ -429,10 +429,10 @@ This table organizes the Biblical timeline into discrete years. Each record repr
 | Field | Type | Status | Description |
 |-------|------|--------|-------------|
 | `yearNum` | string | Incomplete | Integer for the year where negative values indicate BC, positive indicates AD |
-| `peopleBorn` | array | Incomplete | People born that year, if known. |
-| `peopleDied` | array | Incomplete | People who died that year, if known. |
+| `peopleBorn` | array | Incomplete | An array of record IDs linking to the 'people' table, representing individuals born in this year. |
+| `peopleDied` | array | Incomplete | An array of record IDs linking to the 'people' table, representing individuals who died in this year. |
 | `events` | string | Incomplete | Title of events which occurred in that year. Complete for the book of Acts. |
-| `booksWritten` | array | Incomplete | Books of the bible written that year, if known. |
+| `booksWritten` | array | Incomplete | An array of record IDs linking to the 'books' table, representing books written in this year. |
 | `isoYear` | integer | Validated | ISO-8601 standard year number (accounts for the non-existence of year 0) |
 | `BC-AD` | string | Incomplete | Groups AD and BC years |
 | `formattedYear` | string | Validated | Formatted string for the year and AD/BC designation |
@@ -477,7 +477,7 @@ This table catalogs all geographic locations mentioned in the Bible. Each record
 | `comment` | string | Incomplete | Comments from OpenBible.info/geo |
 | `precision` | string | Incomplete | Relative accuracy of lat/long assignment |
 | `featureType` | string | Incomplete | Delineates, region, city, water, etc. Complete for the book of Acts |
-| `rootID` | array | Temporary | If lat/Lon is borrowed from another place, this links to that record. |
+| `rootID` | array | Temporary | An array containing the record ID of another place record from which coordinates are inherited. |
 | `aliases` | string | Populated | Alternate names for the same coordinate |
 | `dictionaryLink` | string | Unknown | A URL to its Easton's Bible Dictionary entry at https://www.biblestudytools.com/dictionaries/eastons-bible-dictionary. |
 | `dictionaryText` | string | Unknown | The text content from its Easton's Bible Dictionary entry. |
@@ -486,28 +486,28 @@ This table catalogs all geographic locations mentioned in the Bible. Each record
 | `recogitoUri` | string | Populated | Links to an associated place in other historical databases |
 | `recogitoLat` | string | Populated | Latitude from Recogito matches |
 | `recogitoLon` | string | Populated | Longitude from Recogito matches |
-| `peopleBorn` | array | Validated | People born here, where known |
-| `peopleDied` | array | Validated | People who dies here, where known. |
-| `booksWritten` | array | Incomplete | Books written here, if known. |
-| `verses` | array | Validated | Links to verse records mentioning this place by name |
+| `peopleBorn` | array | Validated | An array of record IDs linking to the 'people' table, representing individuals born at this location. |
+| `peopleDied` | array | Validated | An array of record IDs linking to the 'people' table, representing individuals who died at this location. |
+| `booksWritten` | array | Incomplete | An array of record IDs linking to the 'books' table, representing books written at this location. |
+| `verses` | array | Validated | An array of record IDs linking to the 'verses' table, representing verses where this place is mentioned. |
 | `recogitoStatus` | string | Populated | Verification of inks to other historical databases |
 | `recogitoType` | string | Populated | Geographic type from Recogito matches |
 | `recogitoComments` | string | Populated | Notes on place assignments from Recogito |
 | `recogitoLabel` | string | Populated | Title from Recogito matches |
 | `recogitoUID` | string | Populated | Unique ID for importing Recogito records |
-| `hasBeenHere` | string | Incomplete | People who have been to this location. Complete for the book of Acts |
+| `hasBeenHere` | string | Incomplete | A string containing a comma-separated list of `personLookup` identifiers for people who have visited this location. |
 | `latitude` | string | Populated | Best available latitude, depending on Recogito and OpenBible validation |
 | `longitude` | string | Populated | Best available longitude, depending on Recogito and OpenBible validation |
 | `status` | string | Temporary | The validation status of the individual place record |
 | `displayTitle` | string | Populated | Disambiguated name suitable for page titles and search results |
 | `alphaGroup` | string | Validated | Used for alphabetical indexing |
 | `slug` | string | Validated | Lowercase, url-friendly version of placeLookup |
-| `duplicate_of` | array | Temporary | Identifies probable duplicates for data cleanup. |
+| `duplicate_of` | array | Temporary | An array containing the record ID of the primary place record that this record duplicates. |
 | `ambiguous` | boolean | Temporary | Identifies display titles which have not been edited for disambiguation. |
-| `eastons` | array | Incomplete | Links to relevant sub-sections in Easton's dictionary. Complete for the book of Acts |
+| `eastons` | array | Incomplete | An array of record IDs linking to the 'easton' table, representing relevant dictionary entries. |
 | `dictText` | array | Incomplete | Markdown-formatted text from relevant sub-section in Easton's dictionary. |
 | `modified` | string | Unknown | Last modified date and time |
-| `eventsHere` | array | Incomplete | Events which took place at the location. Complete for the book of Acts |
+| `eventsHere` | array | Incomplete | An array of record IDs linking to the 'events' table, representing events that occurred at this location.nts that occurred at this location. |
 | `featureSubType` | string | Unknown | A more specific classification of the featureType, such as "River" for the "Water" type. |
 
 ### Relationships
@@ -593,20 +593,20 @@ This table contains the full text of every verse in the King James Version (`ver
 | `osisRef` | string | Validated | Unique identifier using the Open Scriptural Information Standard |
 | `verseNum` | string | Validated | Verse Number (integer) |
 | `verseText` | string | Validated | King James Version text, unformatted. |
-| `book` | array | Validated | Link to the Book record |
-| `people` | array | Validated | People mentioned in the verse text |
+| `book` | array | Validated | An array containing the record ID of the book this verse belongs to. |
+| `people` | array | Validated | An array of record IDs linking to the 'people' table, representing individuals mentioned in this verse. |
 | `peopleCount` | integer | Validated | Number of people mentioned by name |
 | `placesCount` | integer | Validated | Number of place mentioned by name |
-| `places` | array | Validated | Places mentioned in the verse text |
+| `places` | array | Validated | An array of record IDs linking to the 'places' table, representing locations mentioned in this verse. |
 | `yearNum` | integer | Populated | Year related to the verse from Torrey's Treasury of Scripture Knowledge. Not aligned with the events table. |
-| `peopleGroups` | array | Incomplete | Groups of people mentioned in the verse text |
-| `chapter` | array | Validated | Link to the Chapter record |
+| `peopleGroups` | array | Incomplete | An array of record IDs linking to the 'peopleGroups' table, representing groups mentioned in this verse. |
+| `chapter` | array | Validated | An array containing the record ID of the chapter this verse belongs to. |
 | `status` | string | Temporary | The validation status of the linkage between the verse and people, places, or events. |
 | `mdText` | string | Populated | King James Version text, with markdown formatting for exports. |
 | `richText` | string | Populated | King James Version text, with Rich Text formatting for Airtable. |
 | `verseID` | string | Validated | Unique sequential identifier, useful for sorting. |
 | `modified` | string | Unknown | Last modified date and time |
-| `event` | array | Unknown | Links the group to IDs of relevant events. |
+| `event` | array | Unknown | An array of record IDs linking to the 'events' table, representing events associated with this verse. |
 
 ### Relationships
 - `book` → References field `id` of `books` table records
