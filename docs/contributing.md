@@ -10,7 +10,7 @@ If you are a developer, designer, or data expert, start by reviewing the tasks i
 
 # Coding
 
-Theographic began at a 3-day hackathon and grew from there. The initial build of a web-based reader uses [React](https://reactjs.org/) and [Gatsby](https://www.gatsbyjs.org/) (static site generator) hosted on [Netlify](https://www.netlify.com/). If you are familiar with these tools and want to help with the web app, see the [GitHub repo](https://github.com/robertrouse/theographic). To use Theographic data in your own app, refer to the [documentation](documentation.md).
+Theographic began at a 3-day hackathon and grew from there. The initial build of a web-based reader uses [React](https://reactjs.org/) and [Gatsby](https://www.gatsbyjs.org/) (static site generator) hosted on [Netlify](https://www.netlify.com/). If you are familiar with these tools and want to help with the web app, see the [GitHub repo](https://github.com/robertrouse/theographic). To use Theographic data in your own app, refer to the [documentation](README.md).
 
 👉 [See coding-related tasks](https://theographic.notion.site/fc0636f35634467d9fa8272330d89a0c?v=db3b90ff3f9d4cd2bbcca9144610dc3f)
 
@@ -34,7 +34,7 @@ Anyone who uses spreadsheets or databases on a regular basis can help gather, st
 
 Read more about these tools and how to use them with Theographic at these links:
 
-📄 [View and Export Data with Airtable](documentation/view-and-export-data-with-airtable.md)
+📄 [View and Export Data with Airtable](view-and-export-data-with-airtable.md)
 
 # Data Visualization
 

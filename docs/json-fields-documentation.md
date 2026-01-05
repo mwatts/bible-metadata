@@ -27,6 +27,7 @@ This table contains high-level metadata for each of the 66 books in the Protesta
 | `bookOrder` | integer | Validated | Order of books in the traditional Protestant canon, excluding Apocrypha. |
 | `verses` | array | Validated | Links to records in the "verses" table. |
 | `yearWritten` | array | Incomplete | Approximate year written, if known. |
+| `yearWritten` | array | Incomplete | Approximate year written, if known. **Currently in unusable format as of 2026/01/05, but undergoing a fix.** It references an entry in the `periods` table - a table that was removed. In the future, it will be updated with an integer value of the isoYear for that period. |
 | `placeWritten` | array | Incomplete | Place the book was written, if known. |
 | `verseCount` | integer | Validated | Total verses |
 | `chapters` | array | Validated | Links to records in the "chapters" table. |
@@ -36,9 +37,9 @@ This table contains high-level metadata for each of the 66 books in the Protesta
 | `peopleCount` | integer | Validated | Number of people mentioned by name within the book |
 | `placeCount` | integer | Validated | Number of places mentioned by name within the book |
 
+
 ### Relationships
 - `verses` → References field `id` of `verses` table records
-- `yearWritten` → References field `id` of `periods` table
 - `placeWritten` → References field `id` of `places` table
 - `chapters` → References field `id` of `chapters` table records
 - `writers` → References subfield `personLookup` of field `fields` of `people` table records
@@ -404,47 +405,6 @@ This table defines collective groups of people, such as tribes, nations, or fami
     "events_dev": [
       "recvfB75N6vrQwhWW"
     ]
-  }
-}
-```
-
-## Periods (9 Fields)
-This table organizes the Biblical timeline into discrete years. Each record represents a single year and aggregates key information from that period, including `peopleBorn`, `peopleDied`, `events` that occurred, and Biblical `booksWritten`.
-
-### Fields Reference (9 Fields)
-
-| Field | Type | Status | Description |
-|-------|------|--------|-------------|
-| `yearNum` | string | Incomplete | Integer for the year where negative values indicate BC, positive indicates AD |
-| `peopleBorn` | array | Incomplete | People born that year, if known. |
-| `peopleDied` | array | Incomplete | People who died that year, if known. |
-| `events` | string | Incomplete | Title of events which occurred in that year. Complete for the book of Acts. |
-| `booksWritten` | array | Incomplete | Books of the bible written that year, if known. |
-| `isoYear` | integer | Validated | ISO-8601 standard year number (accounts for the non-existence of year 0) |
-| `BC-AD` | string | Incomplete | Groups AD and BC years |
-| `formattedYear` | string | Validated | Formatted string for the year and AD/BC designation |
-| `modified` | string | Unknown | Last modified date and time |
-
-### Relationships
-- `peopleBorn` → References field `id` of `people` table records
-- `peopleDied` → References field `id` of `people` table records
-- `booksWritten` → References field `id` of `books` table records
-
-### Example
-```json
-{
-  "id": "recPI0EyJYFA3IUUZ",
-  "createdTime": "2018-04-28T22:40:37.000Z",
-  "fields": {
-    "yearNum": "-4004",
-    "peopleBorn": [
-      "recyYgUiSETdWFgEP"
-    ],
-    "events": "God creates all things, God creates man and woman, Man falls into sin",
-    "isoYear": -4003,
-    "BC-AD": "BC",
-    "formattedYear": "4004 BC",
-    "modified": "2023-12-02T23:09:33.000Z"
   }
 }
 ```
