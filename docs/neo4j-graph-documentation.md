@@ -18,13 +18,69 @@ For beginners looking to set up their Neo4j environment, please refer to the off
 
 ## Import Instructions
 
-To successfully build the graph, **scripts must be executed in the following specific order.** While the order of files *within* a folder (e.g., which node type is imported first) does not matter, **the folder order is critical.**
+### Manual Import
+
+*This guide is for manual import that involves running multiple individual files.
+For automated import, see the [Automated Import](#automated-import) section below.*
+
+To manually run the import scripts, **scripts must be executed in the following specific order.** While the order of files *within* a folder (e.g., which node type is imported first) does not matter, **the folder order is critical.**
 
 1.  **Schema & Indexes**: Run `neo4j/import/index.cypher` first. This sets up constraints and indexes which significantly speed up the subsequent data import. **Crucially, this also creates Full-Text Indexes**, which enable advanced search capabilities across text fields like names, descriptions, and verse text.
 2.  **Nodes**: Run all scripts in `neo4j/import/nodes/`. These create the entities (People, Places, Books, etc.) without connecting them yet.
 3.  **Relationships**: Run all scripts in `neo4j/import/relationships/`. These scripts match existing nodes and create the edges (relationships) between them.
 
 > **⚠️ Important Note**: Some of the import scripts may time out. Running with parallel: false (the default setting in the scripts) reduces the chance of failure, but occasional retries and minor troubleshooting may still be necessary. If an import fails, re-run the failed step; repeated runs are safe because the scripts use idempotent patterns (ex. MERGE) and will resume by filling in what's missing.
+
+---
+
+### Automated Import
+
+As an alternative to manually running the Cypher scripts, you can use the provided Python script to automate the entire import process. The script is located at `neo4j/import/neo4j_import.py`.
+
+#### Prerequisites
+
+1. **Python 3.7+**: Ensure you have Python installed. You can verify by running:
+   ```bash
+   python --version
+   ```
+
+2. **Neo4j Python Driver**: Install the official Neo4j driver:
+   ```bash
+   pip install neo4j
+   ```
+
+3. **Running Neo4j Instance**: Make sure your Neo4j database is running and accessible.
+
+#### Configuration
+
+Before running the script, open `neo4j/import/neo4j_import.py` and update the connection settings at the top of the file:
+
+```python
+DB_PATH = "bolt://localhost:7687"  # Your Neo4j Bolt URI
+DB_USER = "neo4j"                   # Your database username
+DB_PASSWORD = "ChangeMyPassword"    # Your database password
+```
+
+- **DB_PATH**: The Bolt connection URI. For local installations, this is typically `bolt://localhost:7687`. For AuraDB or remote instances, use the connection string provided by your Neo4j service.
+- **DB_USER**: Your Neo4j username (default is `neo4j`).
+- **DB_PASSWORD**: Your Neo4j password. Replace `"ChangeMyPassword"` with your actual password.
+
+#### Running the Script
+
+Navigate to the `neo4j/import/` directory and run:
+
+```bash
+cd neo4j/import
+python neo4j_import.py
+```
+
+The script will automatically:
+1. Execute the `index.cypher` file to create constraints and indexes
+2. Import all node files from the `nodes/` directory
+3. Import all relationship files from the `relationships/` directory
+
+> **Note**: The script runs all import operations in the correct order. If any statement fails, it will print an error message but continue with the remaining statements. You can safely re-run the script if needed.
+
 ---
 
 ## Graph Data Model
