@@ -34,11 +34,11 @@
         body: JSON.stringify(graphQLParams),
       }).then(response => response.json());
 
-    ReactDOM.render(
+    const root = ReactDOM.createRoot(document.getElementById('graphiql'));
+    root.render(
       React.createElement(GraphiQL, {
         fetcher: fetcher,
-        defaultQuery: `
-# Welcome to the Theographic Bible Metadata GraphQL API!
+        defaultQuery: `# Welcome to the Theographic Bible Metadata GraphQL API!
 #
 # This API provides access to biblical data including books, chapters,
 # verses, people, places, events, and more.
@@ -49,34 +49,42 @@ query GetBooks {
   books {
     id
     bookName
+    testament
     chapterCount
     verseCount
   }
 }
 
-query GetBook {
-  book(id: "Gen") {
-    bookName
-    chapters {
-      chapterNum
-      verses {
-        verseNum
-        verseText
-      }
-    }
+query SearchVerse {
+  searchVerses(input: "John.3.16") {
+    osisRef
+    verseText
+    people { name }
+    places { kjvName }
   }
 }
 
-query GetPeople {
-  people {
-    id
+query SearchPerson {
+  searchPeople(input: "Moses") {
     name
-    description
+    slug
+    gender
+    verseCount
+    memberOf { groupName }
   }
 }
-        `,
+
+query SearchPlace {
+  searchPlaces(input: "Jerusalem") {
+    kjvName
+    displayTitle
+    latitude
+    longitude
+    verseCount
+  }
+}
+`,
       }),
-      document.getElementById('graphiql'),
     );
   </script>
 </body>
