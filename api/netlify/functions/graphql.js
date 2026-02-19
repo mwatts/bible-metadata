@@ -1,4 +1,5 @@
 const { ApolloServer } = require('@apollo/server');
+const { ApolloServerPluginLandingPageLocalDefault } = require('@apollo/server/plugin/landingPage/default');
 const { gql } = require('graphql-tag');
 const fs = require('fs');
 const path = require('path');
@@ -438,6 +439,7 @@ const getApolloServer = async () => {
     apolloServer = new ApolloServer({
       typeDefs,
       resolvers,
+      plugins: [ApolloServerPluginLandingPageLocalDefault()],
     });
     await apolloServer.start();
   }
