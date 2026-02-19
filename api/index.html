@@ -25,11 +25,18 @@
   <script>
     const { GraphiQL } = window.GraphiQL;
 
+    const fetcher = (graphQLParams) =>
+      fetch('/api/graphql', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(graphQLParams),
+      }).then(response => response.json());
+
     ReactDOM.render(
       React.createElement(GraphiQL, {
-        fetcher: GraphiQL.createFetcher({
-          url: '/api/graphql',
-        }),
+        fetcher: fetcher,
         defaultQuery: `
 # Welcome to the Theographic Bible Metadata GraphQL API!
 #
