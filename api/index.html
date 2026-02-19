@@ -20,23 +20,18 @@
 
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/graphiql@3.0.0/graphiql.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@graphiql/toolkit@0.9.1/umd/index.js"></script>
+  <script crossorigin src="https://unpkg.com/graphiql@3.0.9/umd/index.js"></script>
 
   <script>
     const { GraphiQL } = window.GraphiQL;
-
-    const fetcher = (graphQLParams) =>
-      fetch('/api/graphql', {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(graphQLParams),
-      }).then(response => response.json());
+    const { createGraphiQLFetcher } = window.GraphiQLToolkit;
 
     ReactDOM.render(
       React.createElement(GraphiQL, {
-        fetcher: fetcher,
+        fetcher: createGraphiQLFetcher({
+          url: '/api/graphql',
+        }),
         defaultQuery: `
 # Welcome to the Theographic Bible Metadata GraphQL API!
 #
