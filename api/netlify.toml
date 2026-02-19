@@ -1,9 +1,7 @@
 [build]
-  base = "api"
   functions = "netlify/functions"
 
 [dev]
-  base = "api"
   functions = "netlify/functions"
 
 [functions]
