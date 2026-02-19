@@ -1,5 +1,4 @@
 const { ApolloServer } = require('@apollo/server');
-const { startServerAndCreateLambdaHandler } = require('@as-integrations/aws-lambda');
 const { gql } = require('graphql-tag');
 const fs = require('fs');
 const path = require('path');
@@ -447,6 +446,18 @@ const getApolloServer = async () => {
 
 exports.handler = async (event, context) => {
   const server = await getApolloServer();
-  const handler = startServerAndCreateLambdaHandler(server);
-  return handler(event, context);
+  const response = await server.executeHTTPGraphQLRequest({
+    httpGraphQLRequest: {
+      method: event.httpMethod,
+      headers: event.headers,
+      body: event.body,
+      search: event.queryStringParameters ? new URLSearchParams(event.queryStringParameters) : undefined,
+    },
+    context,
+  });
+  return {
+    statusCode: response.status || 200,
+    headers: response.headers,
+    body: response.body.kind === 'string' ? response.body.string : JSON.stringify(response.body.value),
+  };
 };
