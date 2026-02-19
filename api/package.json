@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "netlify dev",
-    "build": "echo 'No build step required'"
+    "build": "echo 'No build step required'",
+    "test": "node --test tests/graphql.test.js",
+    "test:verbose": "node --test --test-reporter=spec tests/graphql.test.js"
   },
   "dependencies": {
     "@apollo/server": "^4.10.0",

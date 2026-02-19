@@ -4,6 +4,10 @@
 [dev]
   functions = "netlify/functions"
 
+[functions]
+  node_bundler = "nft"
+  included_files = ["../json/**"]
+
 [[redirects]]
   from = "/api/graphql"
   to = "/.netlify/functions/graphql"

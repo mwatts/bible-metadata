@@ -225,6 +225,9 @@ types.forEach(type => {
   }
 });
 
+// Secondary lookup maps for fields that use alternate keys instead of record IDs
+const peopleByLookup = new Map(data.people.map(p => [p.fields.personLookup, p]));
+
 const resolvers = {
   Query: {
     books: () => data.books,
@@ -271,7 +274,7 @@ const resolvers = {
     placeWritten: (book) => book.fields.placeWritten?.map(id => maps.places.get(id)).filter(Boolean) || [],
     verseCount: (book) => book.fields.verseCount,
     chapters: (book) => book.fields.chapters?.map(id => maps.chapters.get(id)).filter(Boolean) || [],
-    writers: (book) => book.fields.writers?.map(id => maps.people.get(id)).filter(Boolean) || [],
+    writers: (book) => book.fields.writers?.map(id => maps.people.get(id) || peopleByLookup.get(id)).filter(Boolean) || [],
     testament: (book) => book.fields.testament,
     slug: (book) => book.fields.slug,
     peopleCount: (book) => book.fields.peopleCount,
@@ -287,7 +290,7 @@ const resolvers = {
     peopleCount: (chapter) => chapter.fields.peopleCount,
     placesCount: (chapter) => chapter.fields.placesCount,
     modified: (chapter) => chapter.fields.modified,
-    writerCount: (chapter) => chapter.fields.writerCount,
+    writerCount: (chapter) => chapter.fields['writer count'],
   },
   Verse: {
     osisRef: (verse) => verse.fields.osisRef,
@@ -323,7 +326,7 @@ const resolvers = {
     dictionaryLink: (person) => person.fields.dictionaryLink,
     dictionaryText: (person) => person.fields.dictionaryText,
     events: (person) => person.fields.events,
-    verseCount: (person) => person.fields.verses?.length || 0,
+    verseCount: (person) => person.fields.verseCount ?? person.fields.verses?.length ?? 0,
     verses: (person) => person.fields.verses?.map(id => maps.verses.get(id)).filter(Boolean) || [],
     siblings: (person) => person.fields.siblings?.map(id => maps.people.get(id)).filter(Boolean) || [],
     halfSiblingsSameMother: (person) => person.fields.halfSiblingsSameMother?.map(id => maps.people.get(id)).filter(Boolean) || [],
@@ -352,7 +355,7 @@ const resolvers = {
     verses: (group) => group.fields.verses?.map(id => maps.verses.get(id)).filter(Boolean) || [],
     modified: (group) => group.fields.modified,
     events: (group) => group.fields.events,
-    eventsDev: (group) => group.fields.eventsDev?.map(id => maps.events.get(id)).filter(Boolean) || [],
+    eventsDev: (group) => group.fields.events_dev?.map(id => maps.events.get(id)).filter(Boolean) || [],
     partOf: (group) => group.fields.partOf?.map(id => maps.peopleGroups.get(id)).filter(Boolean) || [],
   },
   Place: {
@@ -368,7 +371,7 @@ const resolvers = {
     aliases: (place) => place.fields.aliases,
     dictionaryLink: (place) => place.fields.dictionaryLink,
     dictionaryText: (place) => place.fields.dictionaryText,
-    verseCount: (place) => place.fields.verses?.length || 0,
+    verseCount: (place) => place.fields.verseCount ?? place.fields.verses?.length ?? 0,
     placeID: (place) => place.fields.placeID,
     recogitoUri: (place) => place.fields.recogitoUri,
     recogitoLat: (place) => place.fields.recogitoLat,
@@ -420,8 +423,8 @@ const resolvers = {
     dictLookup: (easton) => easton.fields.dictLookup,
     termID: (easton) => easton.fields.termID,
     termLabel: (easton) => easton.fields.termLabel,
-    defId: (easton) => easton.fields.defId,
-    hasList: (easton) => easton.fields.hasList,
+    defId: (easton) => easton.fields.def_id,
+    hasList: (easton) => easton.fields.has_list,
     itemNum: (easton) => easton.fields.itemNum,
     matchType: (easton) => easton.fields.matchType,
     matchSlugs: (easton) => easton.fields.matchSlugs,
