@@ -3,3 +3,6 @@ __pycache__/
 airtable_etl.ipynb
 .gitignore
 dev
+# Local Netlify folder
+.netlify
+node_modules/
