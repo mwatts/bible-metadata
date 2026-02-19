@@ -1,5 +1,5 @@
-const { ApolloServer } = require('@apollo/server');
-const { ApolloServerPluginLandingPageLocalDefault } = require('@apollo/server/plugin/landingPage/default');
+const { ApolloServer, HeaderMap } = require('@apollo/server');
+const { ApolloServerPluginLandingPageDisabled } = require('@apollo/server/plugin/disabled');
 const { gql } = require('graphql-tag');
 const fs = require('fs');
 const path = require('path');
@@ -208,7 +208,7 @@ const typeDefs = gql`
 `;
 
 // Load data
-const dataDir = path.join(__dirname, '../../../json');
+const dataDir = path.join(__dirname, 'json');
 const data = {};
 const maps = {};
 
@@ -238,8 +238,8 @@ const resolvers = {
     searchVerses: (root, { input }) => {
       const lowerInput = input.toLowerCase();
       return data.verses.filter(v =>
-        v.fields.osisRef.toLowerCase().includes(lowerInput) ||
-        v.fields.verseText.toLowerCase().includes(lowerInput)
+        v.fields.osisRef?.toLowerCase().includes(lowerInput) ||
+        v.fields.verseText?.toLowerCase().includes(lowerInput)
       );
     },
     searchPeople: (root, { input }) => {
@@ -439,7 +439,7 @@ const getApolloServer = async () => {
     apolloServer = new ApolloServer({
       typeDefs,
       resolvers,
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      plugins: [ApolloServerPluginLandingPageDisabled()],
     });
     await apolloServer.start();
   }
@@ -448,20 +448,73 @@ const getApolloServer = async () => {
 
 exports.handler = async (event, context) => {
   const server = await getApolloServer();
+
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+      body: '',
+    };
+  }
+
+  // Decode base64-encoded body if needed (Netlify may base64-encode binary)
+  let rawBody = event.body || '';
+  if (event.isBase64Encoded) {
+    rawBody = Buffer.from(rawBody, 'base64').toString('utf8');
+  }
+
+  // Parse the body - Apollo Server 4 expects the already-parsed JSON object
+  let parsedBody;
+  if (rawBody) {
+    try {
+      parsedBody = JSON.parse(rawBody);
+    } catch {
+      return { statusCode: 400, body: 'Invalid JSON body' };
+    }
+  }
+
+  // Build HeaderMap (Apollo Server 4 requires this specific class)
+  const headers = new HeaderMap();
+  for (const [key, value] of Object.entries(event.headers || {})) {
+    if (value !== undefined) headers.set(key.toLowerCase(), value);
+  }
+
+  const search = event.queryStringParameters
+    ? '?' + new URLSearchParams(event.queryStringParameters).toString()
+    : '';
+
   const response = await server.executeHTTPGraphQLRequest({
     httpGraphQLRequest: {
       method: event.httpMethod,
-      headers: {
-        get: (name) => event.headers[name.toLowerCase()] || event.headers[name],
-      },
-      body: event.body,
-      search: event.queryStringParameters ? new URLSearchParams(event.queryStringParameters) : undefined,
+      headers,
+      body: parsedBody,
+      search,
     },
-    context,
+    context: async () => ({}),
   });
+
+  let responseBody = '';
+  if (response.body.kind === 'complete') {
+    responseBody = response.body.string;
+  } else {
+    for await (const chunk of response.body.asyncIterator) {
+      responseBody += chunk;
+    }
+  }
+
+  const responseHeaders = { 'Access-Control-Allow-Origin': '*' };
+  for (const [key, value] of response.headers) {
+    responseHeaders[key] = value;
+  }
+
   return {
     statusCode: response.status || 200,
-    headers: Object.fromEntries(response.headers.entries()),
-    body: response.body.kind === 'string' ? response.body.string : JSON.stringify(response.body.value),
+    headers: responseHeaders,
+    body: responseBody,
   };
 };
