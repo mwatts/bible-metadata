@@ -1,0 +1,17 @@
+{
+  "name": "theographic-api",
+  "version": "1.0.0",
+  "description": "GraphQL API for Theographic Bible Metadata using JSON data",
+  "main": "index.js",
+  "scripts": {
+    "start": "netlify dev",
+    "build": "echo 'No build step required'"
+  },
+  "dependencies": {
+    "apollo-server-lambda": "^3.10.0",
+    "graphql": "^16.6.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^12.0.0"
+  }
+}
