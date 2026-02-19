@@ -1,4 +1,6 @@
-const { ApolloServer, gql } = require('apollo-server-netlify');
+const { ApolloServer } = require('@apollo/server');
+const { startServerAndCreateLambdaHandler } = require('@as-integrations/aws-lambda');
+const { gql } = require('graphql-tag');
 const fs = require('fs');
 const path = require('path');
 
@@ -433,8 +435,6 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  playground: true,
-  introspection: true,
 });
 
-exports.handler = server.createHandler();
+exports.handler = startServerAndCreateLambdaHandler(server);
