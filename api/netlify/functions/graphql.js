@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server-lambda');
+const { ApolloServer, gql } = require('apollo-server-netlify');
 const fs = require('fs');
 const path = require('path');
 

@@ -8,7 +8,7 @@
     "build": "echo 'No build step required'"
   },
   "dependencies": {
-    "apollo-server-lambda": "^3.10.0",
+    "apollo-server-netlify": "^3.10.0",
     "graphql": "^16.6.0"
   },
   "devDependencies": {
