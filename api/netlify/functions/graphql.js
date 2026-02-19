@@ -432,9 +432,21 @@ const resolvers = {
   },
 };
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-});
+let apolloServer;
 
-exports.handler = startServerAndCreateLambdaHandler(server);
+const getApolloServer = async () => {
+  if (!apolloServer) {
+    apolloServer = new ApolloServer({
+      typeDefs,
+      resolvers,
+    });
+    await apolloServer.start();
+  }
+  return apolloServer;
+};
+
+exports.handler = async (event, context) => {
+  const server = await getApolloServer();
+  const handler = startServerAndCreateLambdaHandler(server);
+  return handler(event, context);
+};
