@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Theographic Bible Metadata - GraphQL API</title>
-  <link href="https://cdn.jsdelivr.net/npm/graphiql@3.0.9/graphiql.min.css" rel="stylesheet" />
+  <link href="js/graphiql.min.css" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -18,20 +18,25 @@
 <body>
   <div id="graphiql"></div>
 
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script crossorigin src="https://cdn.jsdelivr.net/npm/@graphiql/toolkit@0.9.1/dist/umd/index.js"></script>
-  <script crossorigin src="https://cdn.jsdelivr.net/npm/graphiql@3.0.9/graphiql.min.js"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="js/graphiql.min.js"></script>
 
   <script>
     const { GraphiQL } = window.GraphiQL;
-    const { createGraphiQLFetcher } = window.GraphiQLToolkit;
+
+    const fetcher = (graphQLParams) =>
+      fetch('/api/graphql', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(graphQLParams),
+      }).then(response => response.json());
 
     ReactDOM.render(
       React.createElement(GraphiQL, {
-        fetcher: createGraphiQLFetcher({
-          url: '/api/graphql',
-        }),
+        fetcher: fetcher,
         defaultQuery: `
 # Welcome to the Theographic Bible Metadata GraphQL API!
 #
