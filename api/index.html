@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Theographic Bible Metadata - GraphQL API</title>
-  <link href="https://unpkg.com/graphiql@3.0.9/graphiql.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/js/graphiql.min.css" />
   <style>
     body {
       margin: 0;
@@ -20,30 +20,22 @@
 
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/graphiql@3.0.9/graphiql.min.js"></script>
+  <script src="/js/graphiql.min.js"></script>
 
   <script>
-    const { GraphiQL } = window.GraphiQL;
+    const fetcher = GraphiQL.createFetcher({
+      url: '/api/graphql',
+    });
 
-    const fetcher = (graphQLParams) =>
-      fetch('/api/graphql', {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(graphQLParams),
-      }).then(response => response.json());
-
-    ReactDOM.render(
+    ReactDOM.createRoot(document.getElementById('graphiql')).render(
       React.createElement(GraphiQL, {
         fetcher: fetcher,
-        defaultQuery: `
-# Welcome to the Theographic Bible Metadata GraphQL API!
+        defaultQuery: `# Welcome to the Theographic Bible Metadata GraphQL API!
 #
 # This API provides access to biblical data including books, chapters,
 # verses, people, places, events, and more.
 #
-# Try some example queries below:
+# Try an example query:
 
 query GetBooks {
   books {
@@ -51,32 +43,11 @@ query GetBooks {
     bookName
     chapterCount
     verseCount
+    testament
   }
 }
-
-query GetBook {
-  book(id: "Gen") {
-    bookName
-    chapters {
-      chapterNum
-      verses {
-        verseNum
-        verseText
-      }
-    }
-  }
-}
-
-query GetPeople {
-  people {
-    id
-    name
-    description
-  }
-}
-        `,
+`,
       }),
-      document.getElementById('graphiql'),
     );
   </script>
 </body>

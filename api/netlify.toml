@@ -1,5 +1,7 @@
 [build]
+  publish = "."
   functions = "netlify/functions"
+  command = "npm install && cp -r ../json netlify/functions/json"
 
 [dev]
   functions = "netlify/functions"
