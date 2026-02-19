@@ -1,12 +1,14 @@
 [build]
+  base = "api"
   functions = "netlify/functions"
 
 [dev]
+  base = "api"
   functions = "netlify/functions"
 
 [functions]
   node_bundler = "nft"
-  included_files = ["../json/**"]
+  included_files = ["json/**"]
 
 [[redirects]]
   from = "/api/graphql"

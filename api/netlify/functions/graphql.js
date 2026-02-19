@@ -208,7 +208,20 @@ const typeDefs = gql`
 `;
 
 // Load data
-const dataDir = path.join(__dirname, '../../../json');
+// Resolve the json/ directory. Try candidate paths in order:
+//   1. Repo root relative to this file (local dev): api/netlify/functions/ -> ../../../json
+//   2. Bundled alongside function at Lambda root (Netlify deploy): ../../../json same as above
+//      but NFT places included_files relative to repo root, so also try ../../json and ./json
+const candidateDirs = [
+  path.join(__dirname, '../../../json'), // local dev: api/netlify/functions -> repo root/json
+  path.join(__dirname, '../../json'),    // one level shallower (nft bundle layout)
+  path.join(__dirname, 'json'),          // same directory as function
+  path.join(process.cwd(), 'json'),      // cwd-relative (Lambda /var/task/json)
+];
+
+const dataDir = candidateDirs.find(dir => fs.existsSync(path.join(dir, 'books.json'))) || candidateDirs[0];
+console.log('[graphql] dataDir resolved to:', dataDir);
+
 const data = {};
 const maps = {};
 
@@ -220,6 +233,7 @@ types.forEach(type => {
     data[type] = JSON.parse(fs.readFileSync(filePath, 'utf8'));
     maps[type] = new Map(data[type].map(item => [item.id, item]));
   } else {
+    console.warn('[graphql] WARNING: could not find', filePath);
     data[type] = [];
     maps[type] = new Map();
   }
@@ -450,21 +464,30 @@ const getApolloServer = async () => {
 };
 
 exports.handler = async (event, context) => {
-  const server = await getApolloServer();
-  const response = await server.executeHTTPGraphQLRequest({
-    httpGraphQLRequest: {
-      method: event.httpMethod,
-      headers: {
-        get: (name) => event.headers[name.toLowerCase()] || event.headers[name],
+  try {
+    const server = await getApolloServer();
+    const response = await server.executeHTTPGraphQLRequest({
+      httpGraphQLRequest: {
+        method: event.httpMethod,
+        headers: {
+          get: (name) => event.headers[name.toLowerCase()] || event.headers[name],
+        },
+        body: event.body,
+        search: event.queryStringParameters ? new URLSearchParams(event.queryStringParameters) : undefined,
       },
-      body: event.body,
-      search: event.queryStringParameters ? new URLSearchParams(event.queryStringParameters) : undefined,
-    },
-    context,
-  });
-  return {
-    statusCode: response.status || 200,
-    headers: Object.fromEntries(response.headers.entries()),
-    body: response.body.kind === 'string' ? response.body.string : JSON.stringify(response.body.value),
-  };
+      context,
+    });
+    return {
+      statusCode: response.status || 200,
+      headers: Object.fromEntries(response.headers.entries()),
+      body: response.body.kind === 'string' ? response.body.string : JSON.stringify(response.body.value),
+    };
+  } catch (err) {
+    console.error('[graphql] handler error:', err);
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ errors: [{ message: err.message }] }),
+    };
+  }
 };
