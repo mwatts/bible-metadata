@@ -449,7 +449,9 @@ exports.handler = async (event, context) => {
   const response = await server.executeHTTPGraphQLRequest({
     httpGraphQLRequest: {
       method: event.httpMethod,
-      headers: event.headers,
+      headers: {
+        get: (name) => event.headers[name.toLowerCase()] || event.headers[name],
+      },
       body: event.body,
       search: event.queryStringParameters ? new URLSearchParams(event.queryStringParameters) : undefined,
     },
@@ -457,7 +459,7 @@ exports.handler = async (event, context) => {
   });
   return {
     statusCode: response.status || 200,
-    headers: response.headers,
+    headers: Object.fromEntries(response.headers.entries()),
     body: response.body.kind === 'string' ? response.body.string : JSON.stringify(response.body.value),
   };
 };
