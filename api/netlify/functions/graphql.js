@@ -475,12 +475,12 @@ exports.handler = async (event, context) => {
         body: event.body,
         search: event.queryStringParameters ? new URLSearchParams(event.queryStringParameters) : undefined,
       },
-      context,
+      context: async () => ({}),
     });
     return {
       statusCode: response.status || 200,
       headers: Object.fromEntries(response.headers.entries()),
-      body: response.body.kind === 'string' ? response.body.string : JSON.stringify(response.body.value),
+      body: response.body.kind === 'complete' ? response.body.string : JSON.stringify(response.body),
     };
   } catch (err) {
     console.error('[graphql] handler error:', err);
