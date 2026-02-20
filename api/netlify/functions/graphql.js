@@ -6,321 +6,873 @@ const path = require('path');
 
 const typeDefs = gql`
   # ── Filter input types ───────────────────────────────────────────────────────
-  #
-  # Every collection query accepts an optional "where" argument.
-  # All fields within a where clause are combined with AND logic.
-  # String fields support exact match (eq) and case-insensitive substring (contains).
-  # Numeric/boolean fields support exact match and, where sensible, range (gte/lte).
 
+  """
+  Filter a string field. All specified sub-fields are combined with AND logic.
+  """
   input StringFilter {
-    eq: String          # exact match (case-sensitive)
-    contains: String    # case-insensitive substring
+    "Exact, case-sensitive match. Example: { eq: \\"Genesis\\" }"
+    eq: String
+    "Case-insensitive substring match. Example: { contains: \\"samuel\\" }"
+    contains: String
   }
 
+  """
+  Filter an integer field. All specified sub-fields are combined with AND logic.
+  """
   input IntFilter {
+    "Exact match. Example: { eq: 1 }"
     eq: Int
+    "Greater than or equal. Example: { gte: 100 }"
     gte: Int
+    "Less than or equal. Example: { lte: 500 }"
     lte: Int
   }
 
+  """
+  Filter a boolean field.
+  """
   input BooleanFilter {
+    "Exact match. Example: { eq: true }"
     eq: Boolean
   }
 
+  """
+  Filter arguments for the books query. All fields are combined with AND logic.
+
+  Examples:
+  - New Testament books: { testament: { eq: "New Testament" } }
+  - Books with "samuel" in the name: { bookName: { contains: "samuel" } }
+  - First five books: { bookOrder: { gte: 1, lte: 5 } }
+  """
   input BookFilter {
+    "Filter by record ID"
     id: StringFilter
+    "Full book name, e.g. \\"Genesis\\", \\"Revelation\\""
     bookName: StringFilter
+    "OSIS abbreviation, e.g. \\"Gen\\", \\"Rev\\""
     osisName: StringFilter
+    "Short name abbreviation"
     shortName: StringFilter
-    testament: StringFilter   # "Old Testament" | "New Testament"
-    bookDiv: StringFilter     # "Pentateuch", "Gospels", etc.
+    "Canon division: \\"Old Testament\\" or \\"New Testament\\""
+    testament: StringFilter
+    "Canonical section: \\"Pentateuch\\", \\"Gospels\\", \\"Epistles\\", etc."
+    bookDiv: StringFilter
+    "Canonical order (1 = Genesis, 66 = Revelation)"
     bookOrder: IntFilter
+    "Number of chapters in the book"
     chapterCount: IntFilter
+    "Total number of verses in the book"
     verseCount: IntFilter
+    "URL-friendly slug, e.g. \\"gen\\", \\"rev\\""
     slug: StringFilter
   }
 
+  """
+  Filter arguments for the chapters query. All fields are combined with AND logic.
+
+  Examples:
+  - All Genesis chapters: { osisRef: { contains: "Gen" } }
+  - Chapter 1 of any book: { chapterNum: { eq: 1 } }
+  - Chapters with many people: { peopleCount: { gte: 50 } }
+  """
   input ChapterFilter {
+    "Filter by record ID"
     id: StringFilter
+    "OSIS reference, e.g. \\"Gen.1\\", \\"John.3\\""
     osisRef: StringFilter
+    "URL-friendly slug, e.g. \\"gen_1\\""
     slug: StringFilter
+    "Chapter number within its book"
     chapterNum: IntFilter
+    "Number of distinct people mentioned in this chapter"
     peopleCount: IntFilter
+    "Number of distinct places mentioned in this chapter"
     placesCount: IntFilter
+    "Number of writers attributed to this chapter"
     writerCount: IntFilter
   }
 
+  """
+  Filter arguments for the verses query. All fields are combined with AND logic.
+
+  Examples:
+  - A specific verse: { osisRef: { eq: "Gen.1.1" } }
+  - Verses from the NT ministry period: { yearNum: { gte: 30, lte: 33 } }
+  - Full-text search: { verseText: { contains: "God so loved" } }
+  """
   input VerseFilter {
+    "Filter by record ID"
     id: StringFilter
+    "OSIS reference, e.g. \\"Gen.1.1\\", \\"John.3.16\\""
     osisRef: StringFilter
+    "Case-insensitive substring search across verse text"
     verseText: StringFilter
+    "Estimated year of the verse's events (negative = BC)"
     yearNum: IntFilter
+    "Number of people mentioned in this verse"
     peopleCount: IntFilter
-    status: StringFilter      # "publish" | "draft"
+    "Publication status: \\"publish\\" or \\"draft\\""
+    status: StringFilter
   }
 
+  """
+  Filter arguments for the people query. All fields are combined with AND logic.
+
+  Examples:
+  - All women: { gender: { eq: "Female" } }
+  - People named Mary: { name: { contains: "mary" } }
+  - Major figures: { verseCount: { gte: 200 } }
+  - By slug: { slug: { eq: "moses_2108" } }
+  """
   input PersonFilter {
+    "Filter by record ID"
     id: StringFilter
+    "Primary name, e.g. \\"Moses\\", \\"Mary\\""
     name: StringFilter
+    "Display title (may include disambiguation, e.g. \\"Mary Magdalene\\")"
     displayTitle: StringFilter
+    "Internal lookup key, e.g. \\"moses_2108\\""
     personLookup: StringFilter
-    gender: StringFilter      # "Male" | "Female"
+    "Gender: \\"Male\\" or \\"Female\\""
+    gender: StringFilter
+    "URL-friendly slug"
     slug: StringFilter
+    "Alternate names or titles this person is known by"
     alsoCalled: StringFilter
+    "Alphabetical grouping letter"
     alphaGroup: StringFilter
+    "Record status"
     status: StringFilter
+    "Whether this person's identity is disputed or unclear"
     ambiguous: BooleanFilter
+    "Whether this is a proper name (vs. a title or role)"
     isProperName: BooleanFilter
+    "Number of verses this person appears in"
     verseCount: IntFilter
+    "Earliest estimated year of activity (negative = BC)"
     minYear: IntFilter
+    "Latest estimated year of activity (negative = BC)"
     maxYear: IntFilter
   }
 
+  """
+  Filter arguments for the places query. All fields are combined with AND logic.
+
+  Examples:
+  - Rivers and seas: { featureType: { eq: "Water" } }
+  - Places with Jordan in the name: { kjvName: { contains: "jordan" } }
+  - Exact match: { kjvName: { eq: "Jerusalem" } }
+  - Major locations: { verseCount: { gte: 400 } }
+  """
   input PlaceFilter {
+    "Filter by record ID"
     id: StringFilter
+    "KJV place name, e.g. \\"Jerusalem\\", \\"Egypt\\""
     kjvName: StringFilter
+    "ESV place name (may differ from KJV)"
     esvName: StringFilter
+    "Display title (may include disambiguation)"
     displayTitle: StringFilter
+    "Internal lookup key, e.g. \\"jerusalem_1\\""
     placeLookup: StringFilter
-    featureType: StringFilter  # "City", "Water", "Mountain", etc.
+    "Geographic feature type: \\"City\\", \\"Water\\", \\"Mountain\\", \\"Region\\", \\"Country\\", etc."
+    featureType: StringFilter
+    "More specific feature sub-type"
     featureSubType: StringFilter
+    "URL-friendly slug"
     slug: StringFilter
+    "Alphabetical grouping letter"
     alphaGroup: StringFilter
+    "Record status"
     status: StringFilter
+    "Whether this place's identification is disputed"
     ambiguous: BooleanFilter
+    "Number of verses that mention this place"
     verseCount: IntFilter
   }
 
+  """
+  Filter arguments for the events query. All fields are combined with AND logic.
+
+  Examples:
+  - Events about creation: { title: { contains: "creation" } }
+  - A specific event: { eventID: { eq: 1 } }
+  - Events in a time range (BC): { sortKey: { gte: -1000, lte: -900 } }
+  - Exact title: { title: { eq: "Exodus from Egypt" } }
+  """
   input EventFilter {
+    "Filter by record ID"
     id: StringFilter
+    "Event title, e.g. \\"Creation of all things\\""
     title: StringFilter
+    "Additional notes about the event"
     notes: StringFilter
+    "Start date string (may be a year number as string)"
     startDate: StringFilter
+    "Duration string, e.g. \\"7D\\" (7 days), \\"40Y\\" (40 years)"
     duration: StringFilter
+    "Type of time lag: \\"YR\\", \\"DAY\\", etc."
     lagType: StringFilter
+    "Whether this event spans a range of time rather than a point"
     rangeFlag: BooleanFilter
+    "Sequential event ID number"
     eventID: IntFilter
-    sortKey: IntFilter        # treated as Int range (truncated); use startDate for precision
+    "Numeric sort key representing approximate year (negative = BC). Use gte/lte for time ranges."
+    sortKey: IntFilter
   }
 
+  """
+  Filter arguments for the peopleGroups query. All fields are combined with AND logic.
+
+  Examples:
+  - Exact group: { groupName: { eq: "Tribe of Levi" } }
+  - All tribes: { groupName: { contains: "tribe" } }
+  """
   input PeopleGroupFilter {
+    "Filter by record ID"
     id: StringFilter
+    "Group name, e.g. \\"Tribe of Levi\\", \\"The Twelve Apostles\\""
     groupName: StringFilter
   }
 
+  """
+  Filter arguments for the easton query. All fields are combined with AND logic.
+
+  Examples:
+  - A specific entry: { termLabel: { eq: "Aaron" } }
+  - Person entries only: { matchType: { eq: "person" } }
+  - Entries mentioning Jerusalem: { dictText: { contains: "Jerusalem" } }
+  """
   input EastonFilter {
+    "Filter by record ID"
     id: StringFilter
+    "Dictionary term label, e.g. \\"Aaron\\", \\"Baptism\\""
     termLabel: StringFilter
+    "Dictionary lookup key"
     dictLookup: StringFilter
+    "Match type: \\"person\\", \\"place\\", or \\"unmatched\\""
     matchType: StringFilter
+    "Case-insensitive substring search within the definition text"
     dictText: StringFilter
   }
 
   # ── Core types ────────────────────────────────────────────────────────────────
 
+  """
+  A book of the Bible. Contains metadata, canonical ordering, and links to
+  its chapters, verses, writers, and places where it was written.
+  """
   type Book {
+    "Unique record ID"
     id: String!
+    "OSIS standard abbreviation, e.g. \\"Gen\\", \\"Matt\\""
     osisName: String
+    "Full book name, e.g. \\"Genesis\\", \\"Matthew\\""
     bookName: String
+    "Number of chapters in this book"
     chapterCount: Int
+    "Canonical section, e.g. \\"Pentateuch\\", \\"Gospels\\", \\"Epistles\\""
     bookDiv: String
+    "Short abbreviation, e.g. \\"Ge\\", \\"Mt\\""
     shortName: String
+    "Canonical order (1 = Genesis, 66 = Revelation)"
     bookOrder: Int
+    "All verses in this book"
     verses: [Verse]
+    "Estimated year(s) the book was written"
     yearWritten: [String]
+    "Place(s) where the book was written"
     placeWritten: [Place]
+    "Total number of verses in this book"
     verseCount: Int
+    "All chapters in this book"
     chapters: [Chapter]
+    "Attributed author(s) of this book"
     writers: [Person]
+    "\\"Old Testament\\" or \\"New Testament\\""
     testament: String
+    "URL-friendly slug, e.g. \\"gen\\", \\"matt\\""
     slug: String
+    "Number of distinct people mentioned across this book"
     peopleCount: Int
+    "Number of distinct places mentioned across this book"
     placeCount: Int
   }
 
+  """
+  A single chapter within a book of the Bible.
+  """
   type Chapter {
+    "Unique record ID"
     id: String!
+    "OSIS reference, e.g. \\"Gen.1\\", \\"John.3\\""
     osisRef: String
+    "The book this chapter belongs to"
     book: [Book]
+    "Chapter number within its book"
     chapterNum: Int
+    "Attributed writer(s) of this chapter"
     writer: [Person]
+    "All verses in this chapter"
     verses: [Verse]
+    "URL-friendly slug, e.g. \\"gen_1\\""
     slug: String
+    "Number of distinct people mentioned in this chapter"
     peopleCount: Int
+    "Number of distinct places mentioned in this chapter"
     placesCount: Int
+    "Last modified timestamp"
     modified: String
+    "Number of writers attributed to this chapter"
     writerCount: Int
   }
 
+  """
+  A single verse of the Bible, including its text and all linked entities
+  (people, places, events, groups).
+  """
   type Verse {
+    "Unique record ID"
     id: String!
+    "OSIS reference, e.g. \\"Gen.1.1\\", \\"John.3.16\\""
     osisRef: String
+    "Verse number within its chapter"
     verseNum: String
+    "Full KJV verse text"
     verseText: String
+    "The book this verse belongs to"
     book: [Book]
+    "People mentioned or referenced in this verse"
     people: [Person]
+    "Number of people mentioned in this verse"
     peopleCount: Int
+    "Places mentioned or referenced in this verse"
     places: [Place]
+    "Number of places mentioned in this verse"
     placesCount: Int
+    "Estimated year of the verse's events (negative = BC)"
     yearNum: Int
+    "People groups mentioned in this verse"
     peopleGroups: [PeopleGroup]
+    "The chapter this verse belongs to"
     chapter: [Chapter]
+    "Publication status: \\"publish\\" or \\"draft\\""
     status: String
+    "Verse text with Markdown entity links"
     mdText: String
+    "Verse text with rich-text formatting"
     richText: String
+    "Legacy verse ID string"
     verseID: String
+    "Last modified timestamp"
     modified: String
+    "Biblical events that include this verse"
     event: [Event]
   }
 
+  """
+  A biblical person, including biographical data, family relationships,
+  and links to verses, groups, places, and events.
+  """
   type Person {
+    "Unique record ID"
     id: String!
+    "Internal lookup key, e.g. \\"moses_2108\\""
     personLookup: String
+    "Sequential person ID number"
     personID: Int
+    "Primary name, e.g. \\"Moses\\", \\"Mary\\""
     name: String
+    "Surname or family name, if applicable"
     surname: String
+    "Whether this is a proper name (vs. a title or collective role)"
     isProperName: Boolean
+    "\\"Male\\" or \\"Female\\""
     gender: String
+    "Estimated birth year(s) (negative = BC)"
     birthYear: [String]
+    "Estimated death year(s) (negative = BC)"
     deathYear: [String]
+    "People groups this person belongs to (tribes, nations, sects, etc.)"
     memberOf: [PeopleGroup]
+    "Place(s) where this person was born"
     birthPlace: [Place]
+    "Place(s) where this person died"
     deathPlace: [Place]
+    "URL to an external dictionary entry"
     dictionaryLink: String
+    "Text of the external dictionary entry"
     dictionaryText: String
+    "Legacy events string"
     events: String
+    "Number of verses this person appears in"
     verseCount: Int
+    "All verses this person appears in"
     verses: [Verse]
+    "Full siblings (same father and mother)"
     siblings: [Person]
+    "Half-siblings sharing the same mother"
     halfSiblingsSameMother: [Person]
+    "Half-siblings sharing the same father"
     halfSiblingsSameFather: [Person]
+    "Chapters attributed to this person as writer"
     chaptersWritten: [Chapter]
+    "Mother of this person"
     mother: [Person]
+    "Father of this person"
     father: [Person]
+    "Children of this person"
     children: [Person]
+    "Earliest estimated year of activity (negative = BC)"
     minYear: Int
+    "Latest estimated year of activity (negative = BC)"
     maxYear: Int
+    "Display title, may include disambiguation"
     displayTitle: String
+    "Record status"
     status: String
+    "Alphabetical grouping letter"
     alphaGroup: String
+    "URL-friendly slug, e.g. \\"moses_2108\\""
     slug: String
+    "Spouses or partners"
     partners: [Person]
+    "Alternate names or titles this person is also known by"
     alsoCalled: String
+    "Whether this person's identity is disputed or unclear"
     ambiguous: Boolean
+    "Easton's Bible Dictionary entries linked to this person"
     eastons: [Easton]
+    "Dictionary text snippets"
     dictText: [String]
+    "Last modified timestamp"
     modified: String
+    "Events this person was involved in, in chronological order"
     timeline: [Event]
   }
 
+  """
+  A named group of people — a tribe, nation, sect, army, or other collective.
+  Examples: Tribe of Levi, Pharisees, The Twelve Apostles.
+  """
   type PeopleGroup {
+    "Unique record ID"
     id: String!
+    "Group name, e.g. \\"Tribe of Levi\\", \\"Pharisees\\""
     groupName: String
+    "Individual members of this group"
     members: [Person]
+    "Verses that mention this group"
     verses: [Verse]
+    "Last modified timestamp"
     modified: String
+    "Legacy events string"
     events: String
+    "Events associated with this group"
     eventsDev: [Event]
+    "Parent group(s) this group is a part of"
     partOf: [PeopleGroup]
   }
 
+  """
+  A geographical location mentioned in the Bible, with coordinates,
+  feature type, and links to people and events associated with it.
+  """
   type Place {
+    "Unique record ID"
     id: String!
+    "Internal lookup key, e.g. \\"jerusalem_1\\""
     placeLookup: String
+    "Latitude from the OpenBible dataset"
     openBibleLat: String
+    "Longitude from the OpenBible dataset"
     openBibleLong: String
+    "Place name as it appears in the KJV"
     kjvName: String
+    "Place name as it appears in the ESV"
     esvName: String
+    "Notes or comments about this place"
     comment: String
+    "Coordinate precision level"
     precision: String
+    "Geographic feature type: \\"City\\", \\"Water\\", \\"Mountain\\", \\"Region\\", \\"Country\\", etc."
     featureType: String
+    "Root place IDs this place is derived from"
     rootID: [String]
+    "Alternate names or aliases"
     aliases: String
+    "URL to an external dictionary entry"
     dictionaryLink: String
+    "Text of the external dictionary entry"
     dictionaryText: String
+    "Number of verses that mention this place"
     verseCount: Int
+    "Sequential place ID number"
     placeID: Int
+    "Recogito annotation URI"
     recogitoUri: String
+    "Latitude from the Recogito dataset"
     recogitoLat: String
+    "Longitude from the Recogito dataset"
     recogitoLon: String
+    "People born at this place"
     peopleBorn: [Person]
+    "People who died at this place"
     peopleDied: [Person]
+    "Books written at this place"
     booksWritten: [Book]
+    "Verses that mention this place"
     verses: [Verse]
+    "Recogito annotation status"
     recogitoStatus: String
+    "Recogito place type"
     recogitoType: String
+    "Recogito annotation comments"
     recogitoComments: String
+    "Recogito display label"
     recogitoLabel: String
+    "Recogito unique ID"
     recogitoUID: String
+    "People or groups recorded as having been at this place"
     hasBeenHere: String
+    "Preferred latitude (decimal degrees)"
     latitude: String
+    "Preferred longitude (decimal degrees)"
     longitude: String
+    "Record status"
     status: String
+    "Display title, may include disambiguation"
     displayTitle: String
+    "Alphabetical grouping letter"
     alphaGroup: String
+    "URL-friendly slug"
     slug: String
+    "If this is a duplicate, the canonical place record(s)"
     duplicateOf: [Place]
+    "Whether this place's identification is disputed"
     ambiguous: Boolean
+    "Easton's Bible Dictionary entries linked to this place"
     eastons: [Easton]
+    "Dictionary text snippets"
     dictText: [String]
+    "Last modified timestamp"
     modified: String
+    "Events that took place here"
     eventsHere: [Event]
+    "More specific feature sub-type"
     featureSubType: String
   }
 
+  """
+  A biblical event — a narrative occurrence with a title, timeframe,
+  participants, locations, and linked verses.
+
+  sortKey is a float representing the approximate year (negative = BC),
+  useful for chronological ordering and range filtering.
+  """
   type Event {
+    "Unique record ID"
     id: String!
+    "Event title, e.g. \\"Creation of all things\\", \\"Baptism of Jesus\\""
     title: String
+    "Start date string (may be a year number)"
     startDate: String
+    "Duration string, e.g. \\"7D\\" (7 days), \\"40Y\\" (40 years)"
     duration: String
+    "People who participated in this event"
     participants: [Person]
+    "Places where this event occurred"
     locations: [Place]
+    "Verses that describe or relate to this event"
     verses: [Verse]
+    "The event that immediately precedes this one in the narrative"
     predecessor: [Event]
+    "Time lag value between predecessor and this event"
     lag: String
+    "Parent event(s) this event is part of"
     partOf: [Event]
+    "Additional notes about this event"
     notes: String
+    "Sort string based on verse reference"
     verseSort: String
+    "People groups involved in this event"
     groups: [PeopleGroup]
+    "Last modified timestamp"
     modified: String
+    "Numeric sort key representing approximate year (negative = BC)"
     sortKey: Float
+    "Whether this event spans a range of time rather than a single point"
     rangeFlag: Boolean
+    "Type of time lag to the predecessor: \\"YR\\", \\"DAY\\", etc."
     lagType: String
+    "Sequential event ID number"
     eventID: Int
   }
 
+  """
+  An entry from Easton's Bible Dictionary, optionally linked to
+  a person or place in the dataset.
+  """
   type Easton {
+    "Unique record ID"
     id: String!
+    "Dictionary lookup key"
     dictLookup: String
+    "Term identifier within the dictionary"
     termID: String
+    "The dictionary term (heading), e.g. \\"Aaron\\", \\"Baptism\\""
     termLabel: String
+    "Definition paragraph ID"
     defId: String
+    "Whether the entry includes a list"
     hasList: String
+    "Item number within a multi-part entry"
     itemNum: Int
+    "How this entry was matched to dataset records: \\"person\\", \\"place\\", or \\"unmatched\\""
     matchType: String
+    "Slugs of matched records"
     matchSlugs: String
+    "Full definition text"
     dictText: String
+    "Person records linked to this dictionary entry"
     personLookup: [Person]
+    "Place records linked to this dictionary entry"
     placeLookup: [Place]
+    "Index position within the dictionary"
     index: Int
   }
 
   # ── Queries ───────────────────────────────────────────────────────────────────
 
   type Query {
-    books(where: BookFilter, limit: Int, offset: Int): [Book]
-    chapters(where: ChapterFilter, limit: Int, offset: Int): [Chapter]
-    verses(where: VerseFilter, limit: Int, offset: Int): [Verse]
-    people(where: PersonFilter, limit: Int, offset: Int): [Person]
-    places(where: PlaceFilter, limit: Int, offset: Int): [Place]
-    events(where: EventFilter, limit: Int, offset: Int): [Event]
-    peopleGroups(where: PeopleGroupFilter, limit: Int, offset: Int): [PeopleGroup]
-    easton(where: EastonFilter, limit: Int, offset: Int): [Easton]
+    """
+    Return books of the Bible, optionally filtered and paginated.
 
-    # Full-text search queries (unchanged)
-    searchVerses(input: String!): [Verse]
-    searchPeople(input: String!): [Person]
-    searchPlaces(input: String!): [Place]
+    Examples:
+    \`\`\`graphql
+    # All New Testament books
+    books(where: { testament: { eq: "New Testament" } }) { bookName chapterCount }
+
+    # Books with "samuel" in the name
+    books(where: { bookName: { contains: "samuel" } }) { bookName }
+
+    # Page 2 of Old Testament books (10 per page)
+    books(where: { testament: { eq: "Old Testament" } }, limit: 10, offset: 10) { bookName }
+    \`\`\`
+    """
+    books(
+      "Filter books by one or more fields (AND logic)"
+      where: BookFilter
+      "Maximum number of results to return"
+      limit: Int
+      "Number of results to skip (for pagination)"
+      offset: Int
+    ): [Book]
+
+    """
+    Return chapters, optionally filtered and paginated.
+
+    Examples:
+    \`\`\`graphql
+    # All 50 chapters of Genesis
+    chapters(where: { osisRef: { contains: "Gen" } }) { osisRef chapterNum }
+
+    # Chapter 1 of every book
+    chapters(where: { chapterNum: { eq: 1 } }) { osisRef book { bookName } }
+    \`\`\`
+    """
+    chapters(
+      "Filter chapters by one or more fields (AND logic)"
+      where: ChapterFilter
+      "Maximum number of results to return"
+      limit: Int
+      "Number of results to skip (for pagination)"
+      offset: Int
+    ): [Chapter]
+
+    """
+    Return verses, optionally filtered and paginated.
+
+    Examples:
+    \`\`\`graphql
+    # A specific verse by OSIS reference
+    verses(where: { osisRef: { eq: "John.3.16" } }) { verseText }
+
+    # Verses from the NT ministry period
+    verses(where: { yearNum: { gte: 30, lte: 33 } }, limit: 50) { osisRef verseText }
+
+    # Full-text search within verse text
+    verses(where: { verseText: { contains: "God so loved" } }) { osisRef verseText }
+    \`\`\`
+    """
+    verses(
+      "Filter verses by one or more fields (AND logic)"
+      where: VerseFilter
+      "Maximum number of results to return"
+      limit: Int
+      "Number of results to skip (for pagination)"
+      offset: Int
+    ): [Verse]
+
+    """
+    Return people, optionally filtered and paginated.
+
+    Examples:
+    \`\`\`graphql
+    # All women in the dataset
+    people(where: { gender: { eq: "Female" } }) { name verseCount }
+
+    # Major figures (appearing in 200+ verses)
+    people(where: { verseCount: { gte: 200 } }) { name verseCount }
+
+    # Look up by slug
+    people(where: { slug: { eq: "moses_2108" } }) { name father { name } }
+    \`\`\`
+    """
+    people(
+      "Filter people by one or more fields (AND logic)"
+      where: PersonFilter
+      "Maximum number of results to return"
+      limit: Int
+      "Number of results to skip (for pagination)"
+      offset: Int
+    ): [Person]
+
+    """
+    Return places, optionally filtered and paginated.
+
+    Examples:
+    \`\`\`graphql
+    # Rivers and seas
+    places(where: { featureType: { eq: "Water" } }) { kjvName latitude longitude }
+
+    # Places with "jordan" in the name
+    places(where: { kjvName: { contains: "jordan" } }) { kjvName verseCount }
+
+    # Major locations (400+ verse mentions)
+    places(where: { verseCount: { gte: 400 } }) { kjvName verseCount }
+    \`\`\`
+    """
+    places(
+      "Filter places by one or more fields (AND logic)"
+      where: PlaceFilter
+      "Maximum number of results to return"
+      limit: Int
+      "Number of results to skip (for pagination)"
+      offset: Int
+    ): [Place]
+
+    """
+    Return events, optionally filtered and paginated.
+
+    Events are sorted by their natural dataset order. Use sortKey for
+    chronological ordering (negative values = BC).
+
+    Examples:
+    \`\`\`graphql
+    # Events with "exodus" in the title
+    events(where: { title: { contains: "exodus" } }) {
+      title startDate participants { name }
+    }
+
+    # A specific event by ID
+    events(where: { eventID: { eq: 1 } }) { title startDate }
+
+    # Events in a chronological range (1000–900 BC)
+    events(where: { sortKey: { gte: -1000, lte: -900 } }) {
+      title sortKey locations { kjvName }
+    }
+
+    # First 20 events
+    events(limit: 20) { title startDate sortKey }
+    \`\`\`
+    """
+    events(
+      "Filter events by one or more fields (AND logic)"
+      where: EventFilter
+      "Maximum number of results to return"
+      limit: Int
+      "Number of results to skip (for pagination)"
+      offset: Int
+    ): [Event]
+
+    """
+    Return people groups (tribes, nations, sects, etc.), optionally filtered.
+
+    Examples:
+    \`\`\`graphql
+    # All tribes
+    peopleGroups(where: { groupName: { contains: "tribe" } }) { groupName members { name } }
+
+    # An exact group
+    peopleGroups(where: { groupName: { eq: "The Twelve Apostles" } }) {
+      groupName members { name }
+    }
+    \`\`\`
+    """
+    peopleGroups(
+      "Filter groups by one or more fields (AND logic)"
+      where: PeopleGroupFilter
+      "Maximum number of results to return"
+      limit: Int
+      "Number of results to skip (for pagination)"
+      offset: Int
+    ): [PeopleGroup]
+
+    """
+    Return entries from Easton's Bible Dictionary, optionally filtered.
+
+    Examples:
+    \`\`\`graphql
+    # Look up a specific term
+    easton(where: { termLabel: { eq: "Aaron" } }) { termLabel dictText }
+
+    # All person-matched entries
+    easton(where: { matchType: { eq: "person" } }, limit: 20) { termLabel personLookup { name } }
+    \`\`\`
+    """
+    easton(
+      "Filter dictionary entries by one or more fields (AND logic)"
+      where: EastonFilter
+      "Maximum number of results to return"
+      limit: Int
+      "Number of results to skip (for pagination)"
+      offset: Int
+    ): [Easton]
+
+    """
+    Full-text search across verses by OSIS reference or verse text.
+    Returns all verses where the input string appears in either field.
+
+    Example: searchVerses(input: "John.3.16") or searchVerses(input: "God so loved")
+    """
+    searchVerses(
+      "Text to search for in osisRef or verseText (case-insensitive)"
+      input: String!
+    ): [Verse]
+
+    """
+    Full-text search for people by name, alternate name, or lookup key.
+    Returns all people where the input string matches any of those fields.
+
+    Example: searchPeople(input: "Moses") or searchPeople(input: "Israel")
+    """
+    searchPeople(
+      "Text to search for in name, alsoCalled, or personLookup (case-insensitive)"
+      input: String!
+    ): [Person]
+
+    """
+    Full-text search for places by KJV name, display title, or lookup key.
+    Returns all places where the input string matches any of those fields.
+
+    Example: searchPlaces(input: "Jerusalem") or searchPlaces(input: "egypt")
+    """
+    searchPlaces(
+      "Text to search for in kjvName, displayTitle, or placeLookup (case-insensitive)"
+      input: String!
+    ): [Place]
   }
 `;
 
