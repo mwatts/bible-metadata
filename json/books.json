@@ -26100,9 +26100,7 @@
                 "rec5ImGtAWYMm21vk",
                 "recQkqdxMs85v095s"
             ],
-            "yearWritten": [
-                "recjz0yynf7rcdlXV"
-            ],
+            "yearWritten": "50",
             "verseCount": 1071,
             "chapters": [
                 "rec7qtvOOctSDNom8",
@@ -26140,7 +26138,8 @@
             "testament": "New Testament",
             "slug": "matt",
             "peopleCount": 431,
-            "placeCount": 69
+            "placeCount": 69,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -26833,9 +26832,7 @@
                 "recIK8qrpQi8dgzti",
                 "recd6uGzIJhn1fJdp"
             ],
-            "yearWritten": [
-                "rec0A69638GHKV6ts"
-            ],
+            "yearWritten": "67",
             "verseCount": 678,
             "chapters": [
                 "recTzsqcZeto3gXih",
@@ -26861,7 +26858,8 @@
             "testament": "New Testament",
             "slug": "mark",
             "peopleCount": 245,
-            "placeCount": 46
+            "placeCount": 46,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -28027,9 +28025,7 @@
                 "recb8C7X6hkFOS0BB",
                 "recLSgT6XRK97jDxf"
             ],
-            "yearWritten": [
-                "recvOFi9OkrgM1IAO"
-            ],
+            "yearWritten": "57",
             "verseCount": 1151,
             "chapters": [
                 "recT5jBeSTonVjPOv",
@@ -28063,7 +28059,8 @@
             "testament": "New Testament",
             "slug": "luke",
             "peopleCount": 461,
-            "placeCount": 76
+            "placeCount": 76,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -30009,9 +30006,7 @@
                 "recqHPYyN91BfqyBw",
                 "recBkOYVf3laZBCJo"
             ],
-            "yearWritten": [
-                "rec0kTOAllLvN855m"
-            ],
+            "yearWritten": "61",
             "verseCount": 1007,
             "chapters": [
                 "recZAOjAUnGihkYVU",
@@ -30049,7 +30044,8 @@
             "testament": "New Testament",
             "slug": "acts",
             "peopleCount": 592,
-            "placeCount": 244
+            "placeCount": 244,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -30497,9 +30493,7 @@
                 "recJfIRYqySJ70Sjr",
                 "recWW45TZQWhoaMqj"
             ],
-            "yearWritten": [
-                "recvOFi9OkrgM1IAO"
-            ],
+            "yearWritten": "57",
             "placeWritten": [
                 "recpmPd6JhbqhqA0Q"
             ],
@@ -30528,7 +30522,8 @@
             "testament": "New Testament",
             "slug": "rom",
             "peopleCount": 238,
-            "placeCount": 13
+            "placeCount": 13,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -30980,9 +30975,7 @@
                 "recHbFda6fkwadPti",
                 "rec2b64ypm2UUy2PG"
             ],
-            "yearWritten": [
-                "rec51pkZxX5R68gKh"
-            ],
+            "yearWritten": "56",
             "placeWritten": [
                 "recBYO9ocr5Gssb47"
             ],
@@ -31011,7 +31004,8 @@
             "testament": "New Testament",
             "slug": "1cor",
             "peopleCount": 192,
-            "placeCount": 8
+            "placeCount": 8,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -31283,9 +31277,7 @@
                 "recDuwzQQYD0Gi3UQ",
                 "recqDAbPi29sOrSnR"
             ],
-            "yearWritten": [
-                "rec51pkZxX5R68gKh"
-            ],
+            "yearWritten": "56",
             "placeWritten": [
                 "recly2TmP9CBHh8OQ"
             ],
@@ -31311,7 +31303,8 @@
             "testament": "New Testament",
             "slug": "2cor",
             "peopleCount": 122,
-            "placeCount": 12
+            "placeCount": 12,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -31475,9 +31468,7 @@
                 "recPzysEOhMSmdWy2",
                 "recpKpTZQgrrH7ej8"
             ],
-            "yearWritten": [
-                "reca2AmXo0bMJWIoP"
-            ],
+            "yearWritten": "49",
             "placeWritten": [
                 "recKAFuMIt8BAi2OH"
             ],
@@ -31496,7 +31487,8 @@
             "testament": "New Testament",
             "slug": "gal",
             "peopleCount": 87,
-            "placeCount": 10
+            "placeCount": 10,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -31666,9 +31658,7 @@
                 "recXexlugfx7pZ8iy",
                 "rece9YPM83k87vSxD"
             ],
-            "yearWritten": [
-                "rec0kTOAllLvN855m"
-            ],
+            "yearWritten": "61",
             "placeWritten": [
                 "recDDkVF36ecPUge4"
             ],
@@ -31687,7 +31677,8 @@
             "testament": "New Testament",
             "slug": "eph",
             "peopleCount": 88,
-            "placeCount": 1
+            "placeCount": 1,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -31806,9 +31797,7 @@
                 "recok1HhwC3xV6mtT",
                 "recm0CGjFH31qIexH"
             ],
-            "yearWritten": [
-                "rec0kTOAllLvN855m"
-            ],
+            "yearWritten": "61",
             "placeWritten": [
                 "recDDkVF36ecPUge4"
             ],
@@ -31825,7 +31814,8 @@
             "testament": "New Testament",
             "slug": "phil",
             "peopleCount": 63,
-            "placeCount": 3
+            "placeCount": 3,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -31935,9 +31925,7 @@
                 "recUQ0CXl1LLC6Eah",
                 "recuudF5BYrllOPt7"
             ],
-            "yearWritten": [
-                "rec0kTOAllLvN855m"
-            ],
+            "yearWritten": "61",
             "placeWritten": [
                 "recDDkVF36ecPUge4"
             ],
@@ -31954,7 +31942,8 @@
             "testament": "New Testament",
             "slug": "col",
             "peopleCount": 51,
-            "placeCount": 5
+            "placeCount": 5,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -32058,9 +32047,7 @@
                 "recskm05A0CdGevJ3",
                 "reclSfBSVmuTPvZti"
             ],
-            "yearWritten": [
-                "reczWDEgXD69urVJe"
-            ],
+            "yearWritten": "51",
             "placeWritten": [
                 "recQThsW3uau1oxf9"
             ],
@@ -32078,7 +32065,8 @@
             "testament": "New Testament",
             "slug": "1thess",
             "peopleCount": 49,
-            "placeCount": 6
+            "placeCount": 6,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -32140,9 +32128,7 @@
                 "recHzweFq22UdosZK",
                 "rec8tsvceyCD7B9hi"
             ],
-            "yearWritten": [
-                "reczWDEgXD69urVJe"
-            ],
+            "yearWritten": "51",
             "placeWritten": [
                 "recQThsW3uau1oxf9"
             ],
@@ -32158,7 +32144,8 @@
             "testament": "New Testament",
             "slug": "2thess",
             "peopleCount": 29,
-            "placeCount": 0
+            "placeCount": 0,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -32286,9 +32273,7 @@
                 "recnowxWF1SxSPffB",
                 "recwZVvYWVM05VKYw"
             ],
-            "yearWritten": [
-                "recZxgUO7sc80jQw2"
-            ],
+            "yearWritten": "63",
             "verseCount": 113,
             "chapters": [
                 "rece7hdDGdaTeneok",
@@ -32304,7 +32289,8 @@
             "testament": "New Testament",
             "slug": "1tim",
             "peopleCount": 38,
-            "placeCount": 1
+            "placeCount": 1,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -32402,9 +32388,7 @@
                 "recdOaJKBeUwLMq2M",
                 "rec53fDlWTdpbSu68"
             ],
-            "yearWritten": [
-                "rec9aLhxhMi8yaVEO"
-            ],
+            "yearWritten": "66",
             "placeWritten": [
                 "recDDkVF36ecPUge4"
             ],
@@ -32421,7 +32405,8 @@
             "testament": "New Testament",
             "slug": "2tim",
             "peopleCount": 47,
-            "placeCount": 8
+            "placeCount": 8,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -32482,9 +32467,7 @@
                 "recqk2CFv7ZT6c0rh",
                 "recQF8evtCwXHY0xw"
             ],
-            "yearWritten": [
-                "recZxgUO7sc80jQw2"
-            ],
+            "yearWritten": "63",
             "verseCount": 46,
             "chapters": [
                 "recut3mid3XomgMBP",
@@ -32497,7 +32480,8 @@
             "testament": "New Testament",
             "slug": "titus",
             "peopleCount": 16,
-            "placeCount": 2
+            "placeCount": 2,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -32537,9 +32521,7 @@
                 "rec2IfSfMx9WBPrOq",
                 "recj1RyED84AExicf"
             ],
-            "yearWritten": [
-                "rec0kTOAllLvN855m"
-            ],
+            "yearWritten": "61",
             "placeWritten": [
                 "recDDkVF36ecPUge4"
             ],
@@ -32553,7 +32535,8 @@
             "testament": "New Testament",
             "slug": "phlm",
             "peopleCount": 15,
-            "placeCount": 0
+            "placeCount": 0,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -32871,9 +32854,7 @@
                 "recuWcI9hj2a9UFy6",
                 "reckIZRHofJBUUP5S"
             ],
-            "yearWritten": [
-                "rec0A69638GHKV6ts"
-            ],
+            "yearWritten": "67",
             "verseCount": 303,
             "chapters": [
                 "rec1NwCbwtBqJy07a",
@@ -32896,7 +32877,8 @@
             "testament": "New Testament",
             "slug": "heb",
             "peopleCount": 139,
-            "placeCount": 11
+            "placeCount": 11,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -33019,9 +33001,7 @@
                 "recgaTFZIUvYDOi5P",
                 "rectyJhFIfiWzTYqb"
             ],
-            "yearWritten": [
-                "reczVV9M3tRmnrqVx"
-            ],
+            "yearWritten": "45",
             "verseCount": 108,
             "chapters": [
                 "recLKdKz1PjbJNN3h",
@@ -33036,7 +33016,8 @@
             "testament": "New Testament",
             "slug": "jas",
             "peopleCount": 29,
-            "placeCount": 0
+            "placeCount": 0,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -33156,9 +33137,7 @@
                 "recLHoLOuq7wqwzT1",
                 "recOEZYjXwiPjbALr"
             ],
-            "yearWritten": [
-                "recw5eSM1t5luW1eR"
-            ],
+            "yearWritten": "64",
             "verseCount": 105,
             "chapters": [
                 "recVZx7zfsoJWFIz7",
@@ -33173,7 +33152,8 @@
             "testament": "New Testament",
             "slug": "1pet",
             "peopleCount": 56,
-            "placeCount": 3
+            "placeCount": 3,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
@@ -33249,9 +33229,7 @@
                 "recivnTALiGZTPy4b",
                 "recjUVTDiJoEekP4J"
             ],
-            "yearWritten": [
-                "rec0A69638GHKV6ts"
-            ],
+            "yearWritten": "67",
             "verseCount": 61,
             "chapters": [
                 "recmu9PngE1C6rU9E",
@@ -33264,7 +33242,8 @@
             "testament": "New Testament",
             "slug": "2pet",
             "peopleCount": 24,
-            "placeCount": 1
+            "placeCount": 1,
+            "modified": "2026-01-05T10:59:36.000Z"
         }
     },
     {
