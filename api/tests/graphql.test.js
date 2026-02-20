@@ -740,3 +740,421 @@ describe('cross-type relationship integrity', () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------
+// Filter / where argument tests
+// ---------------------------------------------------------------------------
+
+describe('books filter (where)', () => {
+  test('filter by testament eq', async () => {
+    const data = await gql(`{
+      books(where: { testament: { eq: "New Testament" } }) {
+        id bookName testament
+      }
+    }`);
+    assert.equal(data.books.length, 27, 'NT has 27 books');
+    for (const b of data.books) {
+      assert.equal(b.testament, 'New Testament', `Expected NT, got "${b.testament}" for ${b.bookName}`);
+    }
+  });
+
+  test('filter by bookDiv eq', async () => {
+    const data = await gql(`{
+      books(where: { bookDiv: { eq: "Pentateuch" } }) {
+        id bookName bookDiv
+      }
+    }`);
+    assert.equal(data.books.length, 5, 'Pentateuch has 5 books');
+    for (const b of data.books) {
+      assert.equal(b.bookDiv, 'Pentateuch');
+    }
+  });
+
+  test('filter by bookName contains (case-insensitive)', async () => {
+    const data = await gql(`{
+      books(where: { bookName: { contains: "samuel" } }) {
+        id bookName
+      }
+    }`);
+    assert.ok(data.books.length >= 2, 'Should find 1 Samuel and 2 Samuel');
+    for (const b of data.books) {
+      assert.ok(b.bookName.toLowerCase().includes('samuel'), `Expected name to contain "samuel", got "${b.bookName}"`);
+    }
+  });
+
+  test('filter by bookOrder range', async () => {
+    const data = await gql(`{
+      books(where: { bookOrder: { gte: 1, lte: 5 } }) {
+        id bookName bookOrder
+      }
+    }`);
+    assert.equal(data.books.length, 5, 'Books 1-5 = Pentateuch');
+    for (const b of data.books) {
+      assert.ok(b.bookOrder >= 1 && b.bookOrder <= 5);
+    }
+  });
+
+  test('filter by slug eq', async () => {
+    const data = await gql(`{
+      books(where: { slug: { eq: "gen" } }) {
+        id bookName slug
+      }
+    }`);
+    assert.equal(data.books.length, 1, 'Only one book with slug "gen"');
+    assert.equal(data.books[0].bookName, 'Genesis');
+  });
+
+  test('limit and offset', async () => {
+    const page1 = await gql(`{ books(limit: 5, offset: 0) { id bookOrder } }`);
+    const page2 = await gql(`{ books(limit: 5, offset: 5) { id bookOrder } }`);
+    assert.equal(page1.books.length, 5);
+    assert.equal(page2.books.length, 5);
+    // Pages should not overlap
+    const ids1 = new Set(page1.books.map(b => b.id));
+    for (const b of page2.books) {
+      assert.ok(!ids1.has(b.id), 'Page 2 should not contain page 1 records');
+    }
+  });
+
+  test('combined where + limit', async () => {
+    const data = await gql(`{
+      books(where: { testament: { eq: "Old Testament" } }, limit: 5) {
+        id bookName testament
+      }
+    }`);
+    assert.equal(data.books.length, 5, 'limit: 5 should cap results');
+    for (const b of data.books) {
+      assert.equal(b.testament, 'Old Testament');
+    }
+  });
+
+  test('no match returns empty array', async () => {
+    const data = await gql(`{
+      books(where: { bookName: { eq: "ZZZNOMATCH" } }) { id }
+    }`);
+    assert.equal(data.books.length, 0);
+  });
+});
+
+describe('events filter (where)', () => {
+  test('filter by title contains', async () => {
+    const data = await gql(`{
+      events(where: { title: { contains: "creation" } }) {
+        id title
+      }
+    }`);
+    assert.ok(data.events.length >= 1, 'Should find creation event(s)');
+    for (const e of data.events) {
+      assert.ok(e.title.toLowerCase().includes('creation'), `"${e.title}" does not contain "creation"`);
+    }
+  });
+
+  test('filter by eventID eq', async () => {
+    const data = await gql(`{
+      events(where: { eventID: { eq: 1 } }) {
+        id title eventID
+      }
+    }`);
+    assert.equal(data.events.length, 1, 'eventID 1 should match exactly one event');
+    assert.equal(data.events[0].eventID, 1);
+    assert.ok(data.events[0].title, 'Event should have a title');
+  });
+
+  test('filter by title eq', async () => {
+    const data = await gql(`{
+      events(where: { title: { eq: "Creation of all things" } }) {
+        id title
+      }
+    }`);
+    assert.equal(data.events.length, 1);
+    assert.equal(data.events[0].title, 'Creation of all things');
+  });
+
+  test('events limit', async () => {
+    const data = await gql(`{ events(limit: 10) { id title } }`);
+    assert.equal(data.events.length, 10, 'limit: 10 should return exactly 10 events');
+  });
+
+  test('filter by id eq', async () => {
+    // First fetch all events to get a real id
+    const all = await gql(`{ events(limit: 1) { id title } }`);
+    const targetId = all.events[0].id;
+    const data = await gql(`{
+      events(where: { id: { eq: "${targetId}" } }) {
+        id title
+      }
+    }`);
+    assert.equal(data.events.length, 1, 'id eq filter should match exactly one record');
+    assert.equal(data.events[0].id, targetId);
+  });
+});
+
+describe('people filter (where)', () => {
+  test('filter by gender eq', async () => {
+    const data = await gql(`{
+      people(where: { gender: { eq: "Female" } }, limit: 20) {
+        id name gender
+      }
+    }`);
+    assert.ok(data.people.length > 0, 'Should find female people');
+    for (const p of data.people) {
+      assert.equal(p.gender, 'Female', `Expected Female, got "${p.gender}" for ${p.name}`);
+    }
+  });
+
+  test('filter by name contains', async () => {
+    const data = await gql(`{
+      people(where: { name: { contains: "mary" } }) {
+        id name
+      }
+    }`);
+    assert.ok(data.people.length > 0, 'Should find people named Mary');
+    for (const p of data.people) {
+      assert.ok(p.name.toLowerCase().includes('mary'), `"${p.name}" does not contain "mary"`);
+    }
+  });
+
+  test('filter by verseCount range', async () => {
+    const data = await gql(`{
+      people(where: { verseCount: { gte: 200 } }) {
+        id name verseCount
+      }
+    }`);
+    assert.ok(data.people.length > 0, 'Several key figures appear in >= 200 verses');
+    for (const p of data.people) {
+      assert.ok(p.verseCount >= 200, `${p.name} verseCount ${p.verseCount} should be >= 200`);
+    }
+    // Moses, David, Jesus should be in here
+    const names = data.people.map(p => p.name);
+    assert.ok(names.includes('Moses') || names.includes('Jesus') || names.includes('David'),
+      'Major figures should appear when filtering verseCount >= 200');
+  });
+
+  test('filter by slug eq', async () => {
+    const data = await gql(`{
+      people(where: { slug: { eq: "moses_2108" } }) {
+        id name slug
+      }
+    }`);
+    assert.equal(data.people.length, 1);
+    assert.equal(data.people[0].name, 'Moses');
+  });
+
+  test('filter by isProperName eq true', async () => {
+    const data = await gql(`{
+      people(where: { isProperName: { eq: true } }, limit: 20) {
+        id name isProperName
+      }
+    }`);
+    assert.ok(data.people.length > 0);
+    for (const p of data.people) {
+      assert.equal(p.isProperName, true, `${p.name} should have isProperName = true`);
+    }
+  });
+
+  test('filter by ambiguous eq true', async () => {
+    const data = await gql(`{
+      people(where: { ambiguous: { eq: true } }, limit: 10) {
+        id name ambiguous
+      }
+    }`);
+    // There may or may not be ambiguous people — just check type consistency
+    for (const p of data.people) {
+      assert.equal(p.ambiguous, true, `${p.name} should be ambiguous`);
+    }
+  });
+});
+
+describe('places filter (where)', () => {
+  test('filter by featureType eq', async () => {
+    const data = await gql(`{
+      places(where: { featureType: { eq: "Water" } }, limit: 20) {
+        id kjvName featureType
+      }
+    }`);
+    assert.ok(data.places.length > 0, 'Should find water features');
+    for (const p of data.places) {
+      assert.equal(p.featureType, 'Water');
+    }
+  });
+
+  test('filter by kjvName contains', async () => {
+    const data = await gql(`{
+      places(where: { kjvName: { contains: "jordan" } }) {
+        id kjvName
+      }
+    }`);
+    assert.ok(data.places.length > 0, 'Should find places with "Jordan" in name');
+    for (const p of data.places) {
+      assert.ok(p.kjvName.toLowerCase().includes('jordan'));
+    }
+  });
+
+  test('filter by kjvName eq', async () => {
+    const data = await gql(`{
+      places(where: { kjvName: { eq: "Jerusalem" } }) {
+        id kjvName slug
+      }
+    }`);
+    assert.ok(data.places.length >= 1, 'Jerusalem should exist');
+    assert.ok(data.places.some(p => p.kjvName === 'Jerusalem'));
+  });
+
+  test('filter by verseCount gte', async () => {
+    const data = await gql(`{
+      places(where: { verseCount: { gte: 400 } }) {
+        id kjvName verseCount
+      }
+    }`);
+    assert.ok(data.places.length > 0, 'Major places should have >= 400 verses');
+    for (const p of data.places) {
+      assert.ok(p.verseCount >= 400, `${p.kjvName} verseCount ${p.verseCount} should be >= 400`);
+    }
+  });
+});
+
+describe('chapters filter (where)', () => {
+  test('filter by chapterNum eq', async () => {
+    const data = await gql(`{
+      chapters(where: { chapterNum: { eq: 1 } }, limit: 10) {
+        id chapterNum osisRef
+      }
+    }`);
+    assert.ok(data.chapters.length > 0, 'Chapter 1 exists in many books');
+    for (const c of data.chapters) {
+      assert.equal(c.chapterNum, 1);
+    }
+  });
+
+  test('filter by osisRef contains', async () => {
+    const data = await gql(`{
+      chapters(where: { osisRef: { contains: "Gen" } }) {
+        id osisRef
+      }
+    }`);
+    assert.equal(data.chapters.length, 50, 'Genesis has 50 chapters');
+    for (const c of data.chapters) {
+      assert.ok(c.osisRef.startsWith('Gen.'));
+    }
+  });
+
+  test('filter by peopleCount gte', async () => {
+    const data = await gql(`{
+      chapters(where: { peopleCount: { gte: 50 } }) {
+        id osisRef peopleCount
+      }
+    }`);
+    assert.ok(data.chapters.length > 0, 'Some chapters have many people');
+    for (const c of data.chapters) {
+      assert.ok(c.peopleCount >= 50);
+    }
+  });
+});
+
+describe('verses filter (where)', () => {
+  test('filter by osisRef eq', async () => {
+    const data = await gql(`{
+      verses(where: { osisRef: { eq: "Gen.1.1" } }) {
+        id osisRef verseText
+      }
+    }`);
+    assert.equal(data.verses.length, 1);
+    assert.equal(data.verses[0].osisRef, 'Gen.1.1');
+    assert.ok(data.verses[0].verseText.includes('beginning'));
+  });
+
+  test('filter by status eq', async () => {
+    const data = await gql(`{
+      verses(where: { status: { eq: "publish" } }, limit: 5) {
+        id status
+      }
+    }`);
+    assert.ok(data.verses.length > 0);
+    for (const v of data.verses) {
+      assert.equal(v.status, 'publish');
+    }
+  });
+
+  test('filter by yearNum range', async () => {
+    const data = await gql(`{
+      verses(where: { yearNum: { gte: 30, lte: 33 } }, limit: 20) {
+        id osisRef yearNum
+      }
+    }`);
+    assert.ok(data.verses.length > 0, 'NT ministry years should have verses');
+    for (const v of data.verses) {
+      assert.ok(v.yearNum >= 30 && v.yearNum <= 33, `yearNum ${v.yearNum} out of range for ${v.osisRef}`);
+    }
+  });
+
+  test('filter by verseText contains', async () => {
+    const data = await gql(`{
+      verses(where: { verseText: { contains: "God so loved" } }) {
+        id osisRef verseText
+      }
+    }`);
+    assert.ok(data.verses.length >= 1, 'Should find John 3:16');
+    const john316 = data.verses.find(v => v.osisRef === 'John.3.16');
+    assert.ok(john316, 'John.3.16 should be in results');
+  });
+});
+
+describe('peopleGroups filter (where)', () => {
+  test('filter by groupName eq', async () => {
+    const data = await gql(`{
+      peopleGroups(where: { groupName: { eq: "Tribe of Levi" } }) {
+        id groupName
+      }
+    }`);
+    assert.equal(data.peopleGroups.length, 1);
+    assert.equal(data.peopleGroups[0].groupName, 'Tribe of Levi');
+  });
+
+  test('filter by groupName contains', async () => {
+    const data = await gql(`{
+      peopleGroups(where: { groupName: { contains: "tribe" } }) {
+        id groupName
+      }
+    }`);
+    assert.ok(data.peopleGroups.length > 0, 'Should find tribes');
+    for (const g of data.peopleGroups) {
+      assert.ok(g.groupName.toLowerCase().includes('tribe'));
+    }
+  });
+});
+
+describe('easton filter (where)', () => {
+  test('filter by termLabel eq', async () => {
+    const data = await gql(`{
+      easton(where: { termLabel: { eq: "Aaron" } }) {
+        id termLabel dictText
+      }
+    }`);
+    assert.ok(data.easton.length >= 1, 'Aaron entry should exist');
+    assert.ok(data.easton.some(e => e.termLabel === 'Aaron'));
+  });
+
+  test('filter by matchType eq', async () => {
+    const data = await gql(`{
+      easton(where: { matchType: { eq: "person" } }, limit: 10) {
+        id termLabel matchType
+      }
+    }`);
+    assert.ok(data.easton.length > 0);
+    for (const e of data.easton) {
+      assert.equal(e.matchType, 'person');
+    }
+  });
+
+  test('filter by dictText contains', async () => {
+    const data = await gql(`{
+      easton(where: { dictText: { contains: "Jerusalem" } }, limit: 5) {
+        id termLabel dictText
+      }
+    }`);
+    assert.ok(data.easton.length > 0, 'Some entries should mention Jerusalem');
+    for (const e of data.easton) {
+      assert.ok(e.dictText?.toLowerCase().includes('jerusalem'));
+    }
+  });
+});
