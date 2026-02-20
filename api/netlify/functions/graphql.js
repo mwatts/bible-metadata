@@ -466,13 +466,23 @@ const getApolloServer = async () => {
 exports.handler = async (event, context) => {
   try {
     const server = await getApolloServer();
+
+    // Decode body: Netlify may base64-encode it; Apollo 4 needs a parsed object
+    let body = event.body;
+    if (event.isBase64Encoded && body) {
+      body = Buffer.from(body, 'base64').toString('utf8');
+    }
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (_) { /* leave as string, Apollo will error */ }
+    }
+
     const response = await server.executeHTTPGraphQLRequest({
       httpGraphQLRequest: {
         method: event.httpMethod,
         headers: {
           get: (name) => event.headers[name.toLowerCase()] || event.headers[name],
         },
-        body: event.body,
+        body,
         search: event.queryStringParameters ? new URLSearchParams(event.queryStringParameters) : undefined,
       },
       context: async () => ({}),
