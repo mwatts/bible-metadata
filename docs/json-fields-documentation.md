@@ -264,8 +264,8 @@ This table provides a comprehensive catalog of every individual mentioned by nam
 | `surname` | string | Validated | Surname, if known. |
 | `isProperName` | boolean | Validated | Identifies those with proper names vs. descriptive names like "Wife of..." or "Son of..." |
 | `gender` | string | Validated | Male or Female |
-| `birthYear` | array | Populated | An array of record IDs linking to the 'events' table (specifically year records), representing the person's birth year. |
-| `deathYear` | array | Populated | An array of record IDs linking to the 'events' table (specifically year records), representing the person's death year. |
+| `birthYear` | integer | Populated | A number representing the person's birth year using ISO standards, meaning if the year is -1004 then the person was born in 1005 BC. |
+| `deathYear` | integer | Populated | A number representing the person's death year using ISO standards, meaning if the year is -1004 then the person was born in 1005 BC. |
 | `memberOf` | array | Validated | An array of record IDs linking to the 'peopleGroups' table, indicating the groups (tribes, families, etc.) the person belongs to. |
 | `birthPlace` | array | Validated | An array of record IDs linking to the 'places' table, representing the person's birthplace. |
 | `deathPlace` | array | Validated | An array of record IDs linking to the 'places' table, representing the person's place of death. |
