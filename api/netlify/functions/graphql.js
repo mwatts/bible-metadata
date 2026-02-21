@@ -390,10 +390,22 @@ const typeDefs = gql`
     isProperName: Boolean
     "\\"Male\\" or \\"Female\\""
     gender: String
-    "Estimated birth year(s) (negative = BC)"
-    birthYear: [String]
-    "Estimated death year(s) (negative = BC)"
-    deathYear: [String]
+    """
+    Estimated birth year as an ISO 8601 astronomical year integer (e.g. -1574).
+
+    Uses ISO 8601 astronomical year numbering: 0 = 1 BC, -1 = 2 BC, etc.
+    To convert to a traditional BC year: negate and add 1 (e.g. -1574 = 1575 BC,
+    -4004 = 4003 BC). Positive values are AD years (e.g. 30 = AD 30).
+    """
+    birthYear: Int
+    """
+    Estimated death year as an ISO 8601 astronomical year integer (e.g. -1451).
+
+    Uses ISO 8601 astronomical year numbering: 0 = 1 BC, -1 = 2 BC, etc.
+    To convert to a traditional BC year: negate and add 1 (e.g. -1451 = 1452 BC).
+    Positive values are AD years (e.g. 96 = AD 96).
+    """
+    deathYear: Int
     "People groups this person belongs to (tribes, nations, sects, etc.)"
     memberOf: [PeopleGroup]
     "Place(s) where this person was born"
@@ -1237,8 +1249,8 @@ const resolvers = {
     surname:               (person) => person.fields.surname,
     isProperName:          (person) => person.fields.isProperName,
     gender:                (person) => person.fields.gender,
-    birthYear:             (person) => person.fields.birthYear || [],
-    deathYear:             (person) => person.fields.deathYear || [],
+    birthYear:             (person) => person.fields.birthYear != null ? parseInt(person.fields.birthYear, 10) : null,
+    deathYear:             (person) => person.fields.deathYear != null ? parseInt(person.fields.deathYear, 10) : null,
     memberOf:              (person) => person.fields.memberOf?.map(id => maps.peopleGroups.get(id)).filter(Boolean) || [],
     birthPlace:            (person) => person.fields.birthPlace?.map(id => maps.places.get(id)).filter(Boolean) || [],
     deathPlace:            (person) => person.fields.deathPlace?.map(id => maps.places.get(id)).filter(Boolean) || [],
