@@ -264,8 +264,8 @@ This table provides a comprehensive catalog of every individual mentioned by nam
 | `surname` | string | Validated | Surname, if known. |
 | `isProperName` | boolean | Validated | Identifies those with proper names vs. descriptive names like "Wife of..." or "Son of..." |
 | `gender` | string | Validated | Male or Female |
-| `birthYear` | integer | Populated | A number representing the person's birth year using ISO standards, meaning if the year is -1004 then the person was born in 1005 BC. |
-| `deathYear` | integer | Populated | A number representing the person's death year using ISO standards, meaning if the year is -1004 then the person was born in 1005 BC. |
+| `birthYear` | string | Populated | The person's estimated birth year as a numeric string using ISO 8601 astronomical year numbering. The value `0` corresponds to 1 BC, `-1` to 2 BC, and so on. To convert to a BC year, negate the value and add 1. For example, `-4004` = 4003 BC; `-1574` = 1575 BC. AD years are positive (e.g. `"30"` = AD 30). |
+| `deathYear` | string | Populated | The person's estimated death year as a numeric string using ISO 8601 astronomical year numbering (same convention as `birthYear`). For example, `-1451` = 1452 BC. |
 | `memberOf` | array | Validated | An array of record IDs linking to the 'peopleGroups' table, indicating the groups (tribes, families, etc.) the person belongs to. |
 | `birthPlace` | array | Validated | An array of record IDs linking to the 'places' table, representing the person's birthplace. |
 | `deathPlace` | array | Validated | An array of record IDs linking to the 'places' table, representing the person's place of death. |
@@ -298,8 +298,6 @@ This table provides a comprehensive catalog of every individual mentioned by nam
 | `timeline` | array | Unknown | An array of record IDs linking to the 'events' table, representing events associated with this person. |
 
 ### Relationships
-- `birthYear` → References field `id` of `events` table
-- `deathYear` → References field `id` of `events` table
 - `memberOf` → References field `id` of `peopleGroups` table records
 - `birthPlace` → References field `id` of `places` table records
 - `deathPlace` → References field `id` of `places` table records
@@ -326,12 +324,8 @@ This table provides a comprehensive catalog of every individual mentioned by nam
     "name": "Israel",
     "isProperName": true,
     "gender": "Male",
-    "birthYear": [
-      "recz75OtTAGsJtzXb"
-    ],
-    "deathYear": [
-      "recI6wOLkJOEWZhcL"
-    ],
+    "birthYear": "-1853",
+    "deathYear": "-1743",
     "memberOf": [
       "rechHR2dYztVvgNWa"
     ],

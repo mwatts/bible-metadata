@@ -345,6 +345,33 @@ describe('people query', () => {
     assert.ok(isaac.father.length > 0, 'Isaac should have a father');
     assert.equal(isaac.father[0].name, 'Abraham', 'Isaac\'s father should be Abraham');
   });
+
+  test('birthYear and deathYear are integers (ISO astronomical year numbering)', async () => {
+    const data = await gql(`{
+      people {
+        id
+        name
+        birthYear
+        deathYear
+      }
+    }`);
+    // Both fields should be null or an integer — never a string or array
+    for (const p of data.people) {
+      if (p.birthYear !== null) {
+        assert.equal(typeof p.birthYear, 'number', `birthYear should be a number for ${p.name}, got ${typeof p.birthYear}`);
+        assert.ok(Number.isInteger(p.birthYear), `birthYear should be an integer for ${p.name}, got ${p.birthYear}`);
+      }
+      if (p.deathYear !== null) {
+        assert.equal(typeof p.deathYear, 'number', `deathYear should be a number for ${p.name}, got ${typeof p.deathYear}`);
+        assert.ok(Number.isInteger(p.deathYear), `deathYear should be an integer for ${p.name}, got ${p.deathYear}`);
+      }
+    }
+    // Adam should have a birthYear of -4004 (= 4003 BC in ISO astronomical year numbering)
+    const adam = data.people.find(p => p.name === 'Adam');
+    assert.ok(adam, 'Adam should be in the dataset');
+    assert.ok(adam.birthYear !== null, 'Adam should have a birthYear');
+    assert.equal(adam.birthYear, -4004, `Adam's birthYear should be -4004 (= 4003 BC)`);
+  });
 });
 
 // ---------------------------------------------------------------------------

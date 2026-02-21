@@ -116,6 +116,41 @@ query {
 }
 ```
 
+### Get people with birth and death years
+```graphql
+query {
+  people(where: { name: { eq: "Moses" } }) {
+    name
+    birthYear
+    deathYear
+  }
+}
+```
+
+## Year Numbering Convention
+
+Several fields across the API use **ISO 8601 astronomical year numbering** for dates:
+
+- **`Person.birthYear`** and **`Person.deathYear`**: integers representing the estimated birth or death year.
+- **`Verse.yearNum`** and **`Event.sortKey`**: integers/floats representing the approximate year of a verse's events or an event's timeline position.
+
+### How to read negative years
+
+ISO 8601 astronomical year numbering counts backward from AD 1, with **year 0 equal to 1 BC**:
+
+| ISO year | Traditional date |
+|----------|-----------------|
+| `1`      | AD 1            |
+| `0`      | 1 BC            |
+| `-1`     | 2 BC            |
+| `-1004`  | 1005 BC         |
+| `-4004`  | 4003 BC         |
+
+To convert a negative ISO year to a BC year: **negate the value and add 1**.
+For example: `-4004 → 4003 BC`, `-1574 → 1575 BC`.
+
+Positive values represent AD years directly (e.g. `30` = AD 30).
+
 ## Data Source
 
 The API uses JSON files from the `json/` directory as its data source. These files are generated from Airtable exports and contain structured biblical metadata.
